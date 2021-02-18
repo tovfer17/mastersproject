@@ -1,9 +1,9 @@
 
-qpython:S117"[Rename this local variable "accountSet" to match the regular expression ^[_a-z][a-z0-9_]*$.(È¶•
-lpython:S117"URename this parameter "yearRange" to match the regular expression ^[_a-z][a-z0-9_]*$.(²µÙÀ
-mpython:S117¢"URename this parameter "hoverData" to match the regular expression ^[_a-z][a-z0-9_]*$.(¬Ì×ô
-lpython:S117©"URename this parameter "clickData" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ñ£‚
-rpython:S117"[Rename this parameter "AccountToSearch" to match the regular expression ^[_a-z][a-z0-9_]*$.(²µÙÀ
-Dpython:S1481›"+Remove the unused local variable "ACCOUNT".(Š§¼Í
-xpython:S117C"\Rename this local variable "traceRecode" to match the regular expression ^[_a-z][a-z0-9_]*$.(ª¼ðßÿÿÿÿÿ
-Fpython:S1481š"(Remove the unused local variable "YEAR".(ýÂŸ§ÿÿÿÿÿ
+vpython:S117"\Rename this local variable "traceRecode" to match the regular expression ^[_a-z][a-z0-9_]*$.(ª¼ðßÿÿÿÿÿ
+Cpython:S1481"(Remove the unused local variable "YEAR".(ýÂŸ§ÿÿÿÿÿ
+opython:S117"[Rename this local variable "accountSet" to match the regular expression ^[_a-z][a-z0-9_]*$.(È¶•
+jpython:S117"URename this parameter "hoverData" to match the regular expression ^[_a-z][a-z0-9_]*$.(¬Ì×ô
+Apython:S1481"+Remove the unused local variable "ACCOUNT".(Š§¼Í
+jpython:S117"URename this parameter "yearRange" to match the regular expression ^[_a-z][a-z0-9_]*$.(²µÙÀ
+ipython:S117"URename this parameter "clickData" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ñ£‚
+ppython:S117"[Rename this parameter "AccountToSearch" to match the regular expression ^[_a-z][a-z0-9_]*$.(²µÙÀ

@@ -1,6 +1,5 @@
 
-;python:S125"Remove this commented out code.(ÁÝý¸úÿÿÿÿ
-^python:S100"GRename method "BFS" to match the regular expression ^[a-z_][a-z0-9_]*$.(é®™‰
-,python:S1700
-"Rename field "graph"(îÜøÛ
-mpython:S1001"QRename method "FordFulkerson" to match the regular expression ^[a-z_][a-z0-9_]*$.(­øÒùþÿÿÿÿ
+kpython:S100"QRename method "FordFulkerson" to match the regular expression ^[a-z_][a-z0-9_]*$.(­øÒùþÿÿÿÿ
+*python:S1700"Rename field "graph"(îÜøÛ
+9python:S125"Remove this commented out code.(ÁÝý¸úÿÿÿÿ
+\python:S100"GRename method "BFS" to match the regular expression ^[a-z_][a-z0-9_]*$.(é®™‰

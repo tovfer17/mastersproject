@@ -11,3 +11,9 @@
 venv/maxflow.py,f/5/f571d1c2dd3a2cd529ec8e2a390b6dd41b7112a8
 G
 venv/maxflownetworkx.py,6/7/67f6a3b28f4bb9d9c74d0ff28e0bf451ffd4178f
+>
+venv/edge1.csv,5/f/5f1e5345c18e84bb70e7fd7b9a60f4e793c827d1
+>
+venv/node1.csv,1/2/121eab459b9b597493f02af769b4d166dd0767a4
+S
+#.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
