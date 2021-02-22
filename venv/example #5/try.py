@@ -104,3 +104,8 @@ for i,j in c:
 
 #create optimization model
 m= Model('netflow')
+
+flow = {}
+for i,j,k in arcs_h:
+    flow[i,j,k] = m.addVar(name ='flow_%s_%s_%s' % (i, j, k))
+m.update()
