@@ -1,10 +1,11 @@
 
-
 import networkx as nx
 # importing matplotlib.pyplot
 import matplotlib.pyplot as plt
-import gurobipy as grb
+import gurobipy as GRB
 
+
+#import gurobipy as gp
 
 
 #https://networkx.org/documentation/stable/reference/classes/digraph.html
@@ -35,6 +36,7 @@ print("list of inflows: ", list(G.nodes(data=True)))
 nodes_h = nx.get_node_attributes(G, 'inflow')
 nodes = G.nodes()
 
+
 # N is # of commodities and its based on the length of the inflow list so 6 commodities
 N = 0
 
@@ -47,7 +49,10 @@ for i in nodes_h:
     print("i: ", i)
     print("j: ", j)
     for k in range(len(j)):
-        print( nodes_h[i][k])
+
+        print("K: ", k, ": ")
+        print(nodes_h[i][k])
+        #print( nodes_h[i][k])
 
     if N == 0:
          N = len(j)
@@ -57,13 +62,14 @@ for i in nodes_h:
 
 larcs = G.edges()
 arcs_h = []
-
 arcs = tuple(G.edges())
+print "piiza", iter(larcs[1])
 for i in range(len(larcs)):
     for k in range(N):
-        ik = list(larcs[i])
-        ik.extend([k])
-        arcs_h.append(tuple(ik))
+        p = 0
+       # ik = list(larcs[i])
+      # ik.extend([k])
+       # arcs_h.append(tuple(ik))
 
 arcs_h = tuple(arcs_h)
 
@@ -104,9 +110,67 @@ for i,j in c:
             capacity_arc[i]=j[k]
 
 #create optimization model
-m= Model('netflow')
+m= GRB.Model('netflow')
 
 flow = {}
 for i,j,k in arcs_h:
     flow[i,j,k] = m.addVar(name ='flow_%s_%s_%s' % (i, j, k))
+
 m.update()
+
+for i,j,k in arcs_h:
+        m.addConstr(flow[i,j,k] <= capacity_h[i,j,k],
+                    'cap_%s_%s_%s' % (i,j,k))
+        m.addConsr(flow[i,j,k] >=0 )
+
+
+for i,j in arcs:
+        m.addConstr(m.quicksum(flow[i,j,k] for i,j,k in arcs_h.select(i,j,'*'))
+                    <= capacity_arc[i,j], 'arccap_%s_%s' % (i,j))
+
+for j,h in nodes_h.iteritems():
+        for k in h:
+            m.addConstr(
+                m.quicksum(flow[i,j,k] for i,j,k in arcs_h.select('*',j,k))==
+                m.quicksum(flow[j, i, k] for j, i, k in arcs_h.select(j, '*', k)),
+                'nodes_%s_%s' % (j,k))
+
+for j,k in supply:
+        m.addConstr(
+            m.quicksum(flow[j, i, k] for j, i, k in arcs_h.select(j, '*', k)) <=
+            supply[j,k],
+            'supply_%s_%s' (j,k))
+        m.addConstr(
+            m.quicksum(flow[i, j, k] for i, j, k in arcs_h.select('*', j, k))== 0)
+
+
+for j,k in demand:
+        m.addConstr(
+            m.quicksum(flow[i, j, k] for j, i, k in arcs_h.select('*',j , k)) <=
+            demand[j,k],
+            'supply_%s_%s' (j,k))
+        m.addConstr(
+            m.quicksum(flow[j, i, k] for j, i, k in arcs_h.select(j, '*', k))== 0)
+
+
+m.update()
+
+unmetDemand= m.LinExpr()
+
+for j,k in demand:
+        flow_demand=arcs_h.select('*',j,k)
+        for x,y,z in flow_demand:
+            unmetDemand.addTerms(-1/demand[j,k],flow[x,y,z])
+        unmetDemand.addConstant(1)
+
+m.setObjective(unmetDemand,GRB.MINIMIZE)
+
+m.update()
+
+m.optimize()
+
+
+flow_solution=m.getAttr('x',flow)
+
+
+print flow_solution
