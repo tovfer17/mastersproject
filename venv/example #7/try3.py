@@ -42,6 +42,8 @@ cost = {
     ('Pens',    'Denver',  'Seattle'):  30}
 
 # Demand for pairs of commodity-city
+#initialize node demand/supply data:
+#A positive value indicates demand, while a negative value indicates supply.
 inflow = {
     ('Pencils', 'Detroit'):   50,
     ('Pencils', 'Denver'):    60,
@@ -54,34 +56,36 @@ inflow = {
     ('Pens',    'New York'): -30,
     ('Pens',    'Seattle'):  -30}
 
+
 # Create optimization model
 m = gp.Model('netflow')
 
 # Create variables
 flow = m.addVars(commodities, arcs, obj=cost, name="flow")
+m.update()
 
 # Arc-capacity constraints
-m.addConstrs(
-    (flow.sum('*', i, j) <= capacity[i, j] for i, j in arcs), "cap")
+#m.addConstrs(
+    #(flow.sum('*', i, j) <= capacity[i, j] for i, j in arcs), "cap")
 
 # Equivalent version using Python looping
-# for i, j in arcs:
-#   m.addConstr(sum(flow[h, i, j] for h in commodities) <= capacity[i, j],
-#               "cap[%s, %s]" % (i, j))
+for i, j in arcs:
+    m.addConstr(sum(flow[h, i, j] for h in commodities) <= capacity[i, j],"cap[%s, %s]" % (i, j))
 
 
 # Flow-conservation constraints
+#hey require that, for each commodity and node, the sum of the flow into the node
+# plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
+#m.addConstrs(
+  # (flow.sum(h, '*', j) + inflow[h, j] == flow.sum(h, j, '*')
+
 m.addConstrs(
-    (flow.sum(h, '*', j) + inflow[h, j] == flow.sum(h, j, '*')
-        for h in commodities for j in nodes), "node")
+    (gp.quicksum(flow[h, i, j] for i, j in arcs.select('*', j)) + inflow[h, j] ==
+      gp.quicksum(flow[h, j, k] for j, k in arcs.select(j, '*'))
+      for h in commodities for j in nodes), "node")
 
-# Alternate version:
-# m.addConstrs(
-#   (gp.quicksum(flow[h, i, j] for i, j in arcs.select('*', j)) + inflow[h, j] ==
-#     gp.quicksum(flow[h, j, k] for j, k in arcs.select(j, '*'))
-#     for h in commodities for j in nodes), "node")
 
-# Compute optimal solution
+# Compute optimal solutions
 m.optimize()
 
 # Print solution

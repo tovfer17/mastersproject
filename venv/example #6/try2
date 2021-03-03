@@ -1,14 +1,15 @@
 # Multicommodity flow example.
 #
 # (C) Fair Isaac Corp., 1983-2020
-
+#Create a random directed graph using NumPy's random functions and then model
+# and solve a minimum-cost multicommodity flow problem constructed on that graph.
 import xpress as xp
 import numpy as np
 import math
 
 # Random network generation
 
-n = 3 + math.ceil(30 * np.random.random())  # number of nodes
+n = 3 + math.ceil(6 * np.random.random())  # number of nodes
 
 thres = 0.4     # density of network
 thresdem = 0.8  # density of demand mesh
@@ -63,7 +64,7 @@ f = {(i, j, d): xp.var(name='f_{0}_{1}_{2}_{3}'.format(i, j, dem[d][0],
 x = {(i, j): xp.var(vartype=xp.integer, name='cap_{0}_{1}'.format(i, j))
      for (i, j) in arcs}
 
-p = xp.problem()
+p = xp.problem('network flow')
 p.addVariable(f, x)
 
 
@@ -103,7 +104,9 @@ p.setObjective(xp.Sum(c[i, j] * x[i, j] for (i, j) in arcs))
 
 # Compact declaration:
 #
-# p = xp.problem(f, x, flow, capacity,
-#                xp.Sum(c[i, j] * x[i, j] for (i, j) in arcs))
+#p = xp.problem(f, x, flow, capacity,
+               #xp.Sum(c[i, j] * x[i, j] for (i, j) in arcs))
 
 p.solve()
+
+print(p.getSolution(range(4)))
