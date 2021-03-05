@@ -1,3 +1,9 @@
+
+#reference with link:
+# https://www.educative.io/edpresso/how-to-implement-a-graph-in-python
+#https://stackoverflow.com/questions/28372127/add-edge-weights-to-plot-output-in-networkx
+#https://networkx.org/documentation/latest/auto_examples/drawing/plot_weighted_graph.html
+
 # Add a vertex to the set of vertices and the graph
 import networkx as netx  # nice (di-)graph Python package
 import matplotlib.pyplot as plt
