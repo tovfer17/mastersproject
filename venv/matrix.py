@@ -7,15 +7,17 @@
 # Add a vertex to the set of vertices and the graph
 import networkx as netx  # nice (di-)graph Python package
 import matplotlib.pyplot as plt
+import numpy as np
+import math
+import xpress as xp
+
 # Driver code
 # stores the vertices in the graph
 vertices = []
 # stores the number of vertices in the graph
 vertices_no = 0
-graph = []
-adjacent=[]
-
 weight=[]
+graph=[]
 
 G = netx.DiGraph()
 def add_vertex(v):
@@ -71,34 +73,36 @@ def convert_graph():
     global graph
     global vertices_no
     global vertices
+    global weight
+
     for i in range(vertices_no):
         for j in range(vertices_no):
             if graph[i][j] != 0:
                 weight = graph[i][j]
-                G.add_edge(i, j, weight=weight)
-                
-   #WORK ON ADDING NODE TO G
-    #G.add_node(add_vertex())
+                G.add_edge(vertices[i], vertices[j], weight=weight)
 
-    edlist = [(u, v) for (u, v, d) in G.edges(data=True)]
+                
+
+   # edlist = [(u, v) for (u, v, d) in G.edges(data=True)]
 
     epos = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] > 0]
     eneg = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] < 0]
 
-    pos = netx.spring_layout(G, seed=160)  # positions for all nodes - seed for reproducibility
+    pos = netx.spring_layout(G,k=150, seed=200)  # positions for all nodes - seed for reproducibility
 
         # nodes
     netx.draw_networkx_nodes(G, pos)
 
         # edges
-    netx.draw_networkx_edges(G, pos, edgelist=edlist, width=6)
+    #netx.draw_networkx_edges(G, pos, edgelist=edlist, width=6)
 
     labels = netx.get_edge_attributes(G, 'weight')
     netx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
 
-    netx.draw_networkx_edges(G, pos, edgelist=epos, width=10)
+    netx.draw_networkx_edges(G, pos, edgelist=epos, width=10, edge_color="orange")
+
     netx.draw_networkx_edges(
-            G, pos, edgelist=eneg, width=6, alpha=0.5, edge_color="b", style="dashed"
+            G, pos, edgelist=eneg, width=6, alpha=0.5, edge_color="blue", style="dashed"
         )
 
         # labels
@@ -109,8 +113,85 @@ def convert_graph():
     plt.axis("off")
     plt.tight_layout()
 
-    plt.show()
+   # plt.show()
+    plt.savefig("graph.png")
 
+
+def max_flow():
+    global graph
+    global vertices_no
+    global vertices
+    global weight
+
+    thres = 0.4  # density of network
+    thresdem = 0.8  # density of demand mesh
+
+    #for i in range(vertices_no):
+       # for j in range(vertices_no):
+           # if graph[i][j] != 0:
+                #weight = graph[i][j]
+                #hi= G.maximun_flow_value(vertices[i], vertices[j], weight=weight)
+    #netx.maximum_flow_value(G, s="s", t="t")
+   # netx.maximum_flow(G, s="s", t="t")
+    #netx.minimum_cut(G, s="s", t="t")
+   # netx.minimum_cut_value(G, s="s", t="t")
+
+    dem = []
+
+    for i in range(vertices_no):
+        for j in range(vertices_no):
+            if i != j and np.random.random() < thresdem:
+                dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
+
+    print("This is a random demand for each node", dem)
+
+    # flow variables
+    f = {(i, j, d): xp.float(name='f_{0}_{1}_{2}_{3}'.format(i, j, dem[d][0],
+                                                           dem[d][1]))
+         for (vertices[i], vertices[j]) in weight for d in range(len(dem))}
+
+    # capacity variables
+    x = {(i, j): xp.var(vartype=xp.float, name='cap_{0}_{1}'.format(vertices[i], vertices[j]))
+         for (vertices[i], vertices[j]) in weight}
+
+    p = xp.problem('network flow')
+    p.addVariable(f, x)
+
+    def demand(i, d):
+        if dem[d][0] == i:  # source
+            return 1
+        elif dem[d][1] == i:  # destination
+            return -1
+        else:
+            return 0
+
+    # Flow conservation constraints: total flow balance at node i for each demand d
+    # must be 0 if i is an intermediate node, 1 if i is the source of demand d, and
+    # -1 if i is the destination.
+
+    flow = {(i, d):
+                xp.constraint(constraint=xp.Sum(f[vertices[i],vertices[j], d]
+                                                for j in range(vertices_no) if (vertices[i], vertices[j]) in weight) -
+                                         xp.Sum(f[vertices[j], vertices[i], d] for j in range(vertices_no) if (vertices[j],vertices[i]) in weight)
+                                         == demand(vertices[i], d),
+                              name='cons_{0}_{1}_{2}'.format(i, dem[d][0], dem[d][1]))
+            for d in range(len(dem)) for i in range(vertices_no)}
+
+    # Capacity constraints: weighted sum of flow variables must be contained in the
+    # total capacity installed on the arc (i, j)
+    capacity = {(i, j):
+                    xp.constraint(constraint=xp.Sum(dem[d][2] * f[vertices[i], vertices[j], d]
+                                                    for d in range(len(dem)))
+                                             <= x[vertices[i], vertices[j]],
+                                  name='capacity_{0}_{1}'.format(vertices[i], vertices[j]))
+                for (i, j) in weight}
+
+    p.addConstraint(flow, capacity)
+
+    p.setObjective(xp.Sum(x[i, j] for (i, j) in weight))
+    p.solve()
+
+    p.getSolution()
 
 # Add vertices to the graph
 add_vertex("s")
@@ -146,5 +227,5 @@ add_edge("y" ,"w", 2000)
 print_graph()
 print("Internal representation: ", graph)
 convert_graph()
-
+max_flow()
 
