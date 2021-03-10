@@ -11,6 +11,8 @@ import numpy as np
 import math
 import xpress as xp
 
+
+
 # Driver code
 # stores the vertices in the graph
 vertices = []
@@ -75,6 +77,7 @@ def convert_graph():
     global vertices
     global weight
 
+
     for i in range(vertices_no):
         for j in range(vertices_no):
             if graph[i][j] != 0:
@@ -126,33 +129,33 @@ def max_flow():
     thres = 0.4  # density of network
     thresdem = 0.8  # density of demand mesh
 
-    #for i in range(vertices_no):
-       # for j in range(vertices_no):
-           # if graph[i][j] != 0:
-                #weight = graph[i][j]
-                #hi= G.maximun_flow_value(vertices[i], vertices[j], weight=weight)
-    #netx.maximum_flow_value(G, s="s", t="t")
-   # netx.maximum_flow(G, s="s", t="t")
-    #netx.minimum_cut(G, s="s", t="t")
-   # netx.minimum_cut_value(G, s="s", t="t")
 
     dem = []
 
     for i in range(vertices_no):
         for j in range(vertices_no):
             if i != j and np.random.random() < thresdem:
-                dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
-
+                 dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
     print("This is a random demand for each node", dem)
 
-    # flow variables
-    f = {(i, j, d): xp.float(name='f_{0}_{1}_{2}_{3}'.format(i, j, dem[d][0],
+
+    for i in range(vertices_no):
+        for j in range(vertices_no):
+            if graph[i][j] != 0:
+                pair = vertices[i], vertices[j]
+                print (pair)
+
+
+    #***********************************************************************************************************************
+    #flow variables
+    f = {(i, j, d): xp.var(name='f_{0}_{1}_{2}_{3}'.format(i, j, dem[d][0],
                                                            dem[d][1]))
-         for (vertices[i], vertices[j]) in weight for d in range(len(dem))}
+         for (i, j) in pair for d in range(len(dem))}
 
     # capacity variables
-    x = {(i, j): xp.var(vartype=xp.float, name='cap_{0}_{1}'.format(vertices[i], vertices[j]))
-         for (vertices[i], vertices[j]) in weight}
+    x = {(i, j): xp.var(vartype=xp.integer, name='cap_{0}_{1}'.format(i, j))
+         for (i,j) in pair}
+    print("this is x", x)
 
     p = xp.problem('network flow')
     p.addVariable(f, x)
@@ -170,9 +173,10 @@ def max_flow():
     # -1 if i is the destination.
 
     flow = {(i, d):
-                xp.constraint(constraint=xp.Sum(f[vertices[i],vertices[j], d]
+                xp.constraint(constraint=xp.Sum(f[vertices[i], vertices[j], d]
                                                 for j in range(vertices_no) if (vertices[i], vertices[j]) in weight) -
-                                         xp.Sum(f[vertices[j], vertices[i], d] for j in range(vertices_no) if (vertices[j],vertices[i]) in weight)
+                                         xp.Sum(f[vertices[j], vertices[i], d] for j in range(vertices_no) if
+                                                (vertices[j], vertices[i]) in weight)
                                          == demand(vertices[i], d),
                               name='cons_{0}_{1}_{2}'.format(i, dem[d][0], dem[d][1]))
             for d in range(len(dem)) for i in range(vertices_no)}
@@ -192,7 +196,7 @@ def max_flow():
     p.solve()
 
     p.getSolution()
-
+#******************************************************************************************************************************
 # Add vertices to the graph
 add_vertex("s")
 add_vertex("x")
