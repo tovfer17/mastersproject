@@ -25,7 +25,8 @@ arcs, capacity = gp.multidict({
     ('Denver',  'Boston'):   120,
     ('Denver',  'New York'): 120,
     ('Denver',  'Seattle'):  120})
-
+print(arcs)
+print(capacity)
 # Cost for triplets commodity-source-destination
 cost = {
     ('Pencils', 'Detroit', 'Boston'):   10,
@@ -70,8 +71,9 @@ m.update()
 
 # Equivalent version using Python looping
 for i, j in arcs:
+    print (i)
+    print(j)
     m.addConstr(sum(flow[h, i, j] for h in commodities) <= capacity[i, j],"cap[%s, %s]" % (i, j))
-
 
 # Flow-conservation constraints
 #hey require that, for each commodity and node, the sum of the flow into the node

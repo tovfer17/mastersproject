@@ -71,7 +71,6 @@ def print_graph():
                       " edge weight: ", graph[i][j])
                 #print vertices
 
-
 def convert_graph():
     global graph
     global vertices_no
@@ -82,8 +81,9 @@ def convert_graph():
     for i in range(vertices_no):
         for j in range(vertices_no):
             if graph[i][j] != 0:
-                weight = graph[i][j]
+                weight=(graph[i][j])
                 G.add_edge(vertices[i], vertices[j], weight=weight)
+
 
     # edlist = [(u, v) for (u, v, d) in G.edges(data=True)]
 
@@ -127,28 +127,40 @@ def max_flow():
     global pair
 
     thresdem = 0.8  # density of demand mesh
-
     dem = []
-
     for i in range(vertices_no):
         for j in range(vertices_no):
             if i != j and np.random.random() < thresdem:
-                dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
+                #dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
+                dem.append((math.ceil(200 * np.random.random())))
     print("This is a random demand for each node", dem)
+    print(dem)
 
+    listkeys=[]
     for i in range(vertices_no):
         for j in range(vertices_no):
-            if graph[i][j] != 0:
-                pair = vertices[i], vertices[j]
-                print(pair)
-    for a in range(len(dem)):
-        print(dem[a])
+           if graph[i][j] != 0:
+                listkeys.append((vertices[i], vertices[j]))
+    print("bye1",listkeys)
+
+    listvalues=[]
+    for i in range(vertices_no):
+        for j in range(vertices_no):
+            if  graph[i][j] != 0:
+                listvalues.append((graph[i][j]))
+    print("bye2", listvalues)
+
+    di,capacity = gp.multidict(dict(zip(listkeys, listvalues)))
+    print("The dictionary after the merge:")
+    print(di)
+
+
     #*******************************************************************************************************************
     # Create optimization model
     m = gp.Model('netflow')
 
     # Create variables
-    flow = m.addVars(dem, weight, name="flow")
+    flow = m.addVars( di, name="flow")
     m.update()
 
     # Arc-capacity constraints
@@ -156,8 +168,10 @@ def max_flow():
     # (flow.sum('*', i, j) <= capacity[i, j] for i, j in arcs), "cap")
 
     # Equivalent version using Python looping
-    for i, j in pair:
-        m.addConstr(sum(flow[h, i, j] for h in dem) <= weight[i, j], "cap[%s, %s]" % (i, j))
+    for x,y in di:
+        print (x)
+        print(y)
+        m.addConstr(sum(flow[h, x, y] for h in commodities) <= capacity[x, y], "cap[%s, %s]" % (x, y))
 
     # Flow-conservation constraints
     # hey require that, for each commodity and node, the sum of the flow into the node
