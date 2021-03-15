@@ -70,9 +70,11 @@ m.update()
     #(flow.sum('*', i, j) <= capacity[i, j] for i, j in arcs), "cap")
 
 # Equivalent version using Python looping
+print("arcs", arcs)
 for i, j in arcs:
     print (i)
     print(j)
+    print("capa",capacity[i,j])
     m.addConstr(sum(flow[h, i, j] for h in commodities) <= capacity[i, j],"cap[%s, %s]" % (i, j))
 
 # Flow-conservation constraints

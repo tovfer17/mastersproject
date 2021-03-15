@@ -174,4 +174,5 @@ m.optimize()
 flow_solution=m.getAttr('x',flow)
 
 
-print flow_solution
+print (flow_solution)
+

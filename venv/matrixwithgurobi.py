@@ -124,7 +124,7 @@ def max_flow():
     global vertices_no
     global vertices
     global weight
-    global pair
+
 
     thresdem = 0.8  # density of demand mesh
     dem = []
@@ -134,7 +134,7 @@ def max_flow():
                 #dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
                 dem.append((math.ceil(200 * np.random.random())))
     print("This is a random demand for each node", dem)
-    print(dem)
+
 
     listkeys=[]
     for i in range(vertices_no):
@@ -151,49 +151,60 @@ def max_flow():
     print("bye2", listvalues)
 
     di,capacity = gp.multidict(dict(zip(listkeys, listvalues)))
-    print("The dictionary after the merge:")
-    print(di)
+    print("The dictionary after the merge of the pairs of nodes with the weights:")
+    #print(di)
+    print (capacity)
 
+    hi,demand =gp.multidict(zip(listkeys,dem))
+    print("The dictionary after the merge of the pairs of nodes with the demands:")
+    print(demand)
 
     #*******************************************************************************************************************
+    test=['a','b','c']
     # Create optimization model
     m = gp.Model('netflow')
 
     # Create variables
-    flow = m.addVars( di, name="flow")
+    flow = m.addVars( test,di, name="flow")
     m.update()
 
-    # Arc-capacity constraints
-    # m.addConstrs(
-    # (flow.sum('*', i, j) <= capacity[i, j] for i, j in arcs), "cap")
+     #Arc-capacity constraints
+    #m.addConstrs(
+    #(flow.sum('*', x, y) <= capacity[x, y] for x, y in di), "cap")
 
     # Equivalent version using Python looping
-    for x,y in di:
-        print (x)
-        print(y)
-        m.addConstr(sum(flow[h, x, y] for h in commodities) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+    #print("why", di)
 
-    # Flow-conservation constraints
+    for x,y in di:
+        #print (x)
+        #print(y)
+        #print("capa", capacity[x, y])
+
+
+       m.addConstr(sum(flow[h, x, y] for h in test) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+
+
+     #Flow-conservation constraints
     # hey require that, for each commodity and node, the sum of the flow into the node
     # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
-    # m.addConstrs(
-    # (flow.sum(h, '*', j) + inflow[h, j] == flow.sum(h, j, '*')
+    #.addConstrs(
+    # (flow.sum('*', y) + demand[y] == flow.sum( y, '*')
 
     m.addConstrs(
-        (gp.quicksum(flow[h, i, j] for i, j in pair.select('*', j)) + dem[h, j] ==
-         gp.quicksum(flow[h, j, k] for j, k in pair.select(j, '*'))
-         for h in dem for j in pair), "node")
+        (gp.quicksum(flow[h,x, y] for x, y in di.select('*', y)) + demand[ y] ==
+          gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
+          for h in test for y in di), "node")
     # Compute optimal solutions
     m.optimize()
 
     # Print solution
     if m.status == GRB.OPTIMAL:
         solution = m.getAttr('x', flow)
-        for h in dem:
+        for h in test:
             print('\nOptimal flows for %s:' % h)
-            for i, j in weight:
-                if solution[h, i, j] > 0:
-                    print('%s -> %s: %g' % (i, j, solution[h, i, j]))
+            for x, y in di:
+                    if solution[h,x, y] > 0:
+                        print('%s -> %s: %g' % (i, j, solution[i, j]))
 
 #***********************************************************************************************************************
 # Add vertices to the graph
