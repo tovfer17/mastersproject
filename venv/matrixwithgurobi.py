@@ -197,14 +197,29 @@ def max_flow():
     # Compute optimal solutions
     m.optimize()
 
-    # Print solution
-    if m.status == GRB.OPTIMAL:
+    print("hi",m.status)
+    if m.status == GRB.INFEASIBLE:
         solution = m.getAttr('x', flow)
         for h in test:
             print('\nOptimal flows for %s:' % h)
             for x, y in di:
-                    if solution[h,x, y] > 0:
-                        print('%s -> %s: %g' % (i, j, solution[i, j]))
+                if solution[h, x, y] > 0:
+                    print('%s -> %s: %g' % (i, j, solution[i, j]))
+
+    #if m.status == GRB.INFEASIBLE:
+        #vars = m.getVars()
+        #ubpen = [1.0] * m.numVars
+        #m.feasRelax(1, False, vars, None, ubpen, None, None)
+        #m.optimize()
+
+    # Print solution
+   # if m.status == GRB.OPTIMAL:
+       # solution = m.getAttr('x', flow)
+        #for h in test:
+           # print('\nOptimal flows for %s:' % h)
+           # for x, y in di:
+                    #if solution[h,x, y] > 0:
+                        #print('%s -> %s: %g' % (i, j, solution[i, j]))
 
 #***********************************************************************************************************************
 # Add vertices to the graph

@@ -92,6 +92,7 @@ m.addConstrs(
 # Compute optimal solutions
 m.optimize()
 
+
 # Print solution
 if m.status == GRB.OPTIMAL:
     solution = m.getAttr('x', flow)
