@@ -160,7 +160,7 @@ def max_flow():
     print(demand)
 
     #*******************************************************************************************************************
-    test=['a','b','c']
+    test=['a']
     # Create optimization model
     m = gp.Model('netflow')
 
@@ -169,33 +169,22 @@ def max_flow():
     m.update()
 
      #Arc-capacity constraints
-    #m.addConstrs(
-    #(flow.sum('*', x, y) <= capacity[x, y] for x, y in di), "cap")
-
-    # Equivalent version using Python looping
-    #print("why", di)
-
     for x,y in di:
-        #print (x)
-        #print(y)
-        #print("capa", capacity[x, y])
-
-
        m.addConstr(sum(flow[h, x, y] for h in test) <= capacity[x, y], "cap[%s, %s]" % (x, y))
 
 
      #Flow-conservation constraints
-    # hey require that, for each commodity and node, the sum of the flow into the node
+    # they require that, for each commodity and node, the sum of the flow into the node
     # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
-    #.addConstrs(
-    # (flow.sum('*', y) + demand[y] == flow.sum( y, '*')
-
     m.addConstrs(
         (gp.quicksum(flow[h,x, y] for x, y in di.select('*', y)) + demand[ y] ==
           gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
           for h in test for y in di), "node")
+
     # Compute optimal solutions
     m.optimize()
+
+    print (m.display())
 
     print("hi",m.status)
     if m.status == GRB.INFEASIBLE:
