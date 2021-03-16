@@ -70,11 +70,11 @@ m.update()
     #(flow.sum('*', i, j) <= capacity[i, j] for i, j in arcs), "cap")
 
 # Equivalent version using Python looping
-print("arcs", arcs)
+#print("arcs", arcs)
 for i, j in arcs:
-    print (i)
-    print(j)
-    print("capa",capacity[i,j])
+    #print (i)
+    #print(j)
+    #print("capa",capacity[i,j])
     m.addConstr(sum(flow[h, i, j] for h in commodities) <= capacity[i, j],"cap[%s, %s]" % (i, j))
 
 # Flow-conservation constraints
@@ -83,6 +83,7 @@ for i, j in arcs:
 #m.addConstrs(
   # (flow.sum(h, '*', j) + inflow[h, j] == flow.sum(h, j, '*')
 
+print("this isnodes",nodes)
 m.addConstrs(
     (gp.quicksum(flow[h, i, j] for i, j in arcs.select('*', j)) + inflow[h, j] ==
       gp.quicksum(flow[h, j, k] for j, k in arcs.select(j, '*'))
@@ -92,6 +93,8 @@ m.addConstrs(
 # Compute optimal solutions
 m.optimize()
 
+print (m.display())
+print("hi", m.status)
 
 # Print solution
 if m.status == GRB.OPTIMAL:
