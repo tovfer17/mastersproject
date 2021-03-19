@@ -19,14 +19,24 @@ commodities = ['Pencils', 'Pens']
 nodes = ['Detroit', 'Denver', 'Boston', 'New York', 'Seattle']
 
 arcs, capacity = gp.multidict({
-    ('Detroit', 'Boston'):   100,
-    ('Detroit', 'New York'):  80,
+   ('Detroit', 'Boston'):   100,
+   ('Detroit', 'New York'):  80,
     ('Detroit', 'Seattle'):  120,
     ('Denver',  'Boston'):   120,
     ('Denver',  'New York'): 120,
     ('Denver',  'Seattle'):  120})
-print(arcs)
-print(capacity)
+#print(arcs)
+#print(capacity)
+#arcs, capacity = gp.multidict({
+   # ('Detroit', 'Boston'):   130,
+    #('Detroit', 'New York'): 140,
+    #('Detroit', 'Seattle'):  135,
+   # ('Denver',  'Boston'):   125,
+   # ('Denver',  'New York'): 125,
+  #  ('Denver',  'Seattle'):  125})
+#print(arcs)
+#print(capacity)
+
 # Cost for triplets commodity-source-destination
 cost = {
     ('Pencils', 'Detroit', 'Boston'):   10,
@@ -49,14 +59,25 @@ inflow = {
     ('Pencils', 'Detroit'):   50,
     ('Pencils', 'Denver'):    60,
     ('Pencils', 'Boston'):   -50,
-    ('Pencils', 'New York'): -50,
-    ('Pencils', 'Seattle'):  -10,
+   ('Pencils', 'New York'): -50,
+   ('Pencils', 'Seattle'):  -10,
     ('Pens',    'Detroit'):   60,
-    ('Pens',    'Denver'):    40,
+   ('Pens',    'Denver'):    40,
     ('Pens',    'Boston'):   -40,
-    ('Pens',    'New York'): -30,
-    ('Pens',    'Seattle'):  -30}
+   ('Pens',    'New York'): -30,
+   ('Pens',    'Seattle'):  -30}
 
+#inflow = {
+   # ('Pencils', 'Detroit'):   100,
+   # ('Pencils', 'Denver'):   100,
+  #  ('Pencils', 'Boston'):   100,
+   # ('Pencils', 'New York'): 20,
+   # ('Pencils', 'Seattle'):  1,
+   # ('Pens',    'Detroit'):   150,
+ #   ('Pens',    'Denver'):    80,
+   # ('Pens',    'Boston'):   60,
+   # ('Pens',    'New York'): 150,
+  #  ('Pens',    'Seattle'):  3}
 
 # Create optimization model
 m = gp.Model('netflow')

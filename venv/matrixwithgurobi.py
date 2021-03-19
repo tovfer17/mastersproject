@@ -149,7 +149,10 @@ def max_flow():
 
     thresdem = 0.8  # density of demand mesh
     dem = [50,60,-50,-50,-10,60,40,-40,-30,-30]
-    #for i in range(vertices_no):
+    #dem = [0,0,0,0,0,0,0,0,0,0]
+
+
+
        # for j in range(vertices_no):
             #if i != j and np.random.random() < thresdem:
                 #dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
@@ -164,37 +167,37 @@ def max_flow():
     print("This is a random demand for each node", dem)
 
 
-    listkeys=[]
+    listkeyPair=[]
     for i in range(vertices_no):
         for j in range(vertices_no):
            if graph[i][j] != 0:
-                listkeys.append((vertices[i], vertices[j]))
-    print("bye1",listkeys)
+                listkeyPair.append((vertices[i], vertices[j]))
+    print("This prints out the nodes in the pair: ",listkeyPair)
 
-    listvalues=[]
+    listvalueCap=[]
     for i in range(vertices_no):
         for j in range(vertices_no):
             if  graph[i][j] != 0:
-                listvalues.append((graph[i][j]))
-    print("bye2", listvalues)
+                listvalueCap.append((graph[i][j]))
+    print("This prints out the capacity of the node pair: ", listvalueCap)
 
-    di,capacity = gp.multidict(dict(zip(listkeys, listvalues)))
-    print("The dictionary after the merge of the pairs of nodes with the weights:")
-    print("gddg",di)
+    di,capacity = gp.multidict(dict(zip(listkeyPair, listvalueCap)))
+    print("The dictionary after the merge of the pairs of nodes with the capacities:")
     print (capacity)
 
     test = ['a']
     print(tuple(test))
+
     listnodes=[]
     for a in range(1):
         for i in range(vertices_no):
                 listnodes.append((test[a],vertices[i]))
-    print("lsit of nodes:", listnodes)
+    print("lsit of nodes with each commodity:", listnodes)
 
     listactualnodes = []
     for i in range(vertices_no):
             listactualnodes.append((vertices[i]))
-    print("lsit ofactual nodes:", listactualnodes)
+    print("lsit of actual nodes:", listactualnodes)
 
 
     com,demand =gp.multidict(dict(zip(listnodes,dem)))
@@ -224,7 +227,7 @@ def max_flow():
     # they require that, for each commodity and node, the sum of the flow into the node
     # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
     m.addConstrs(
-        (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demand[h,y] ==
+        (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demand[h,y]   ==
           gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
           for h in test for y in listactualnodes), "node")
 
@@ -267,17 +270,30 @@ add_edge("x", "z", 3000)
 add_edge("x", "y", 1300)
 add_edge("z", "x", 2000)
 add_edge("z", "t", 4000)
-add_edge("z", "w", 1000)
+#add_edge("z", "w", 1000)
 #add_edge("z", "y", -1500)
 #add_edge("t", "z", -4000)
 #add_edge("t", "w", -2000)
 #add_edge("w", "z", -1000)
 add_edge("w", "t", 2000)
-add_edge("w", "y", 1000)
+#add_edge("w", "y", 1000)
 add_edge("y", "s", 1500)
 #add_edge("y", "x", -1300)
 add_edge("y", "z", 1500)
 add_edge("y", "w", 2000)
+
+
+#add_edge("s", "x", 124)
+#add_edge("x", "z", 124)
+#add_edge("x", "y", 124)
+#add_edge("z", "x", 124)
+#add_edge("z", "t", 124)
+#add_edge("z", "w", 124)
+#add_edge("w", "t", 124)
+#add_edge("w", "y", 124)
+#add_edge("y", "s", 124)
+#add_edge("y", "z", 124)
+#add_edge("y", "w", 124)
 
 print_graph()
 print("Internal representation: ", graph)
