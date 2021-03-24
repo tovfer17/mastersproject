@@ -16,6 +16,7 @@ from gurobipy import GRB
 
 # Base data
 commodities = ['Pencils', 'Pens']
+#commodities = ['Pencils']
 nodes = ['Detroit', 'Denver', 'Boston', 'New York', 'Seattle']
 
 arcs, capacity = gp.multidict({
@@ -38,6 +39,19 @@ arcs, capacity = gp.multidict({
 #print(capacity)
 
 # Cost for triplets commodity-source-destination
+#cost = {
+  #  ('Pencils', 'Detroit', 'Boston'):   10,
+   # ('Pencils', 'Detroit', 'New York'): 20,
+    #('Pencils', 'Detroit', 'Seattle'):  60,
+   # ('Pencils', 'Denver',  'Boston'):   40,
+   # ('Pencils', 'Denver',  'New York'): 40,
+   # ('Pencils', 'Denver',  'Seattle'):  30,
+   # ('Pens',    'Detroit', 'Boston'):   20,
+   # ('Pens',    'Detroit', 'New York'): 20,
+   # ('Pens',    'Detroit', 'Seattle'):  80,
+   # ('Pens',    'Denver',  'Boston'):   60,
+   # ('Pens',    'Denver',  'New York'): 70,
+    #('Pens',    'Denver',  'Seattle'):  30}
 cost = {
     ('Pencils', 'Detroit', 'Boston'):   10,
     ('Pencils', 'Detroit', 'New York'): 20,
@@ -51,7 +65,6 @@ cost = {
     ('Pens',    'Denver',  'Boston'):   60,
     ('Pens',    'Denver',  'New York'): 70,
     ('Pens',    'Denver',  'Seattle'):  30}
-
 # Demand for pairs of commodity-city
 #initialize node demand/supply data:
 #A positive value indicates demand, while a negative value indicates supply.
@@ -66,7 +79,7 @@ inflow = {
     ('Pens',    'Boston'):   -40,
    ('Pens',    'New York'): -30,
    ('Pens',    'Seattle'):  -30}
-
+print(inflow)
 #inflow = {
    # ('Pencils', 'Detroit'):   100,
    # ('Pencils', 'Denver'):   100,

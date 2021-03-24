@@ -127,30 +127,20 @@ def max_flow():
 
     cost = {
         ('a', 's', 'x'): 10,
-        ('a', 's', 'y'): 20,
-        ('a', 'x', 's'): 60,
-        ('a', 'x', 'z'): 40,
-        ('a', 'x', 'y'): 40,
-        ('a', 'z', 'x'): 30,
-        ('a', 'z', 't'): 20,
-        ('a', 'z', 'w'): 20,
-        ('a', 'z', 'y'): 80,
-        ('a', 't', 'z'): 60,
-        ('a', 'z', 'w'): 70,
-        ('a', 'w', 'z'): 30,
-        ('a', 'w', 't'): 30,
-        ('a', 'w', 'y'): 30,
-        ('a', 'y', 's'): 30,
-        ('a', 'y', 'x'): 30,
-        ('a', 'y', 'z'): 30,
-        ('a', 'y', 'w'): 30,
+        ('a', 's', 'z'): 20,
+        ('a', 's', 'w'): 60,
+        ('a', 's', 'y'): 40,
+        ('a', 't', 'x'): 40,
+        ('a', 't', 'z'): 30,
+        ('a', 't', 'w'): 20,
+        ('a', 't', 'y'): 20,
 
     }
 
     thresdem = 0.8  # density of demand mesh
-    dem = [50,60,-50,-50,-10,60,40,-40,-30,-30]
+    #dem = [50,60,-50,-50,-10,60,40,-40,-30,-30]
     #dem = [0,0,0,0,0,0,0,0,0,0]
-
+    dem = [50, -50, -60, 60, -10,-60]
 
 
        # for j in range(vertices_no):
@@ -186,12 +176,13 @@ def max_flow():
     print (capacity)
 
     test = ['a']
-    print(tuple(test))
+    f= tuple(test)
+    print(f)
 
     listnodes=[]
     for a in range(1):
         for i in range(vertices_no):
-                listnodes.append((test[a],vertices[i]))
+                listnodes.append((f[a],vertices[i]))
     print("lsit of nodes with each commodity:", listnodes)
 
     listactualnodes = []
@@ -215,12 +206,12 @@ def max_flow():
     m = gp.Model('netflow')
 
     # Create variables
-    flow = m.addVars( test,di,obj=cost, name="flow")
+    flow = m.addVars( f,di,obj=cost, name="flow")
     m.update()
 
      #Arc-capacity constraints
     for x,y in di:
-       m.addConstr(sum(flow[h, x, y] for h in test) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+       m.addConstr(sum(flow[h, x, y] for h in f) <= capacity[x, y], "cap[%s, %s]" % (x, y))
 
 
      #Flow-conservation constraints
@@ -229,7 +220,7 @@ def max_flow():
     m.addConstrs(
         (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demand[h,y]   ==
           gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
-          for h in test for y in listactualnodes), "node")
+          for h in f for y in listactualnodes), "node")
 
     # Compute optimal solutions
     m.optimize()
@@ -244,7 +235,7 @@ def max_flow():
     # Print solution
     if m.status == GRB.OPTIMAL:
        solution = m.getAttr('x', flow)
-       for h in test:
+       for h in f:
            print('\nOptimal flows for %s:' % h)
            for x, y in di:
                     if solution[h,x, y] > 0:
@@ -264,36 +255,37 @@ add_vertex("y")
 
 
 add_edge("s", "x", 1000)
+add_edge("s", "z", 3000)
+add_edge("s", "w", 2000)
+add_edge("s", "y", 1500)
+add_edge("t", "x", 1000)
+add_edge("t", "z", 4000)
+add_edge("t", "w", 2000)
+add_edge("t", "y", 1500)
+
+
+#add_edge("s", "x", 1000)
 #add_edge("s", "y", -1500)
 #add_edge("x", "s", -1000)
-add_edge("x", "z", 3000)
-add_edge("x", "y", 1300)
-add_edge("z", "x", 2000)
-add_edge("z", "t", 4000)
+#add_edge("x", "z", 3000)
+#add_edge("x", "y", 1300)
+#add_edge("z", "x", 2000)
+#add_edge("z", "t", 4000)
 #add_edge("z", "w", 1000)
 #add_edge("z", "y", -1500)
 #add_edge("t", "z", -4000)
 #add_edge("t", "w", -2000)
 #add_edge("w", "z", -1000)
-add_edge("w", "t", 2000)
+#add_edge("w", "t", 2000)
 #add_edge("w", "y", 1000)
-add_edge("y", "s", 1500)
+#add_edge("y", "s", 1500)
 #add_edge("y", "x", -1300)
-add_edge("y", "z", 1500)
-add_edge("y", "w", 2000)
+#add_edge("y", "z", 1500)
+#add_edge("y", "w", 2000)
 
 
-#add_edge("s", "x", 124)
-#add_edge("x", "z", 124)
-#add_edge("x", "y", 124)
-#add_edge("z", "x", 124)
-#add_edge("z", "t", 124)
-#add_edge("z", "w", 124)
-#add_edge("w", "t", 124)
-#add_edge("w", "y", 124)
-#add_edge("y", "s", 124)
-#add_edge("y", "z", 124)
-#add_edge("y", "w", 124)
+
+
 
 print_graph()
 print("Internal representation: ", graph)
