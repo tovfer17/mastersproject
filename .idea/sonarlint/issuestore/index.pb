@@ -45,3 +45,7 @@ H
 venv/matrixwithgurobi.py,d/4/d4e3363d2b78360793de37fc224b3d974c3d3ada
 H
 venv/matrixwithxpress.py,c/2/c2ddccb4def61dabe1058d6e11a59bd212030db1
+<
+venv/help.py,e/9/e9dc33d082a32bc1774432c366720c82d911f6e6
+=
+venv/help2.py,5/4/54d9c432e555993777ecc8d299cd68af38a747cb

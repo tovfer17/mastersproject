@@ -72,25 +72,25 @@ inflow = {
     ('Pencils', 'Detroit'):   50,
     ('Pencils', 'Denver'):    60,
     ('Pencils', 'Boston'):   -50,
-   ('Pencils', 'New York'): -50,
-   ('Pencils', 'Seattle'):  -10,
+    ('Pencils', 'New York'): -50,
+    ('Pencils', 'Seattle'):  -10,
     ('Pens',    'Detroit'):   60,
-   ('Pens',    'Denver'):    40,
+    ('Pens',    'Denver'):    40,
     ('Pens',    'Boston'):   -40,
-   ('Pens',    'New York'): -30,
-   ('Pens',    'Seattle'):  -30}
-print(inflow)
+    ('Pens',    'New York'): -30,
+    ('Pens',    'Seattle'):  -30}
+#print(inflow)
 #inflow = {
-   # ('Pencils', 'Detroit'):   100,
-   # ('Pencils', 'Denver'):   100,
-  #  ('Pencils', 'Boston'):   100,
-   # ('Pencils', 'New York'): 20,
-   # ('Pencils', 'Seattle'):  1,
-   # ('Pens',    'Detroit'):   150,
- #   ('Pens',    'Denver'):    80,
-   # ('Pens',    'Boston'):   60,
-   # ('Pens',    'New York'): 150,
-  #  ('Pens',    'Seattle'):  3}
+  #  ('Pencils', 'Detroit'):  -50,
+   # ('Pencils', 'Denver'):   -60,
+   # ('Pencils', 'Boston'):   50,
+   # ('Pencils', 'New York'): 50,
+   # ('Pencils', 'Seattle'):  10,
+   # ('Pens',    'Detroit'):   -60,
+   # ('Pens',    'Denver'):    -40,
+   # ('Pens',    'Boston'):   40,
+   # ('Pens',    'New York'): 30,
+  #  ('Pens',    'Seattle'):  30}
 
 # Create optimization model
 m = gp.Model('netflow')
@@ -124,6 +124,7 @@ m.addConstrs(
       for h in commodities for j in nodes), "node")
 
 
+
 # Compute optimal solutions
 m.optimize()
 
@@ -137,4 +138,4 @@ if m.status == GRB.OPTIMAL:
         print('\nOptimal flows for %s:' % h)
         for i, j in arcs:
             if solution[h, i, j] > 0:
-                print('%s -> %s: %g' % (i, j, solution[h, i, j]))
+              print('%s -> %s: %g' % (i, j, solution[h, i, j]))
