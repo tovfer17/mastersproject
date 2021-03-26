@@ -18,7 +18,7 @@ data_dict = {('s','a'):3,
              ('e','t'):1
             }
 edges_list = list(data_dict.keys())
-
+print(edges_list)
 
 # create optimization model:
 model = gp.Model('maximum network flow')
