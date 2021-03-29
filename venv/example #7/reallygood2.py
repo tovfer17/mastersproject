@@ -21,57 +21,38 @@ edges,data_dict = gp.multidict({('Detroit','Boston'):3,
             })
 
 cost = {
-    ('Pencils', 'Detroit', 'Boston'):   1,
-    ('Pencils', 'Detroit', 'New York'): 1,
-    ('Pencils', 'Detroit', 'Seattle'):  1,
-    ('Pencils', 'Detroit', 'LA'):      1,
-    ('Pencils', 'Detroit', 'JerseyCity'): 1,
-    ('Pencils', 'Detroit', 'Tokyo'): 1,
-    ('Pens',    'Detroit',  'Boston'):   1,
-    ('Pens',    'Detroit',  'New York'): 1,
-    ('Pens',    'Detroit',  'Seattle'):  1,
-    ('Pens',    'Detroit',  'Chicago'):   1,
-    ('Pens',    'Detroit',  'LA'): 1,
-    ('Pens', 'Detroit', 'JerseyCity'): 1,
-    ('Pens', 'Detroit', 'Tokyo'): 1,
+    ('Pencils', 'Detroit', 'Boston'):   10,
+    ('Pencils', 'Detroit', 'New York'): 20,
+    ('Pencils', 'Detroit', 'Seattle'):  30,
+    ('Pencils', 'Detroit', 'LA'):      40,
+    ('Pencils', 'Detroit', 'JerseyCity'): 10,
+    ('Pencils', 'Detroit', 'Tokyo'): 20,
+    ('Pens',    'Detroit',  'Boston'):   10,
+    ('Pens',    'Detroit',  'New York'): 20,
+    ('Pens',    'Detroit',  'Seattle'):  30,
+    ('Pens',    'Detroit',  'LA'): 40,
+    ('Pens', 'Detroit', 'JerseyCity'): 50,
+    ('Pens', 'Detroit', 'Tokyo'): 25,
 }
 
-#cost = {
-   # ('Pencils', 'Detroit', 'Boston'):   10,
-   # ('Pencils', 'Detroit', 'New York'): 20,
-   # ('Pencils', 'Detroit', 'Seattle'):  60,
-   # ('Pencils', 'Detroit', 'Chicago'): 25,
-   # ('Pencils', 'Detroit', 'LA'):      40,
-   # ('Pencils', 'Detroit', 'JerseyCity'): 15,
-   # ('Pencils', 'Detroit', 'SanFran'): 15,
-   # ('Pencils', 'Detroit', 'Portland'): 10,
-   # ('Pencils', 'Detroit', 'NewDelhi'): 15,
-   # ('Pencils', 'Detroit', 'Tokyo'): 15,
-   # ('Pens',    'Detroit',  'Boston'):   60,
-   # ('Pens',    'Detroit',  'New York'): 70,
-   # ('Pens',    'Detroit',  'Seattle'):  30,
-   # ('Pens',    'Detroit',  'Chicago'):   60,
-   # ('Pens',    'Detroit',  'LA'): 70,
-   # ('Pens', 'Detroit', 'JerseyCity'): 15,
-   # ('Pens', 'Detroit', 'SanFran'): 80,
-   # ('Pens', 'Detroit', 'Portland'): 70,
-   # ('Pens', 'Detroit', 'NewDelhi'): 15,
-   # ('Pens', 'Detroit', 'Tokyo'): 15,
-#}
+
 
 inflow = {
     ('Pencils', 'Detroit'):   50,
     ('Pencils', 'Boston'):   -50,
     ('Pencils', 'New York'): -50,
     ('Pencils', 'Seattle'):  -10,
-    ('Pencils', 'Seattle'): -10,
     ('Pencils', 'LA'): -10,
     ('Pencils', 'JerseyCity'): -10,
-    ('Pens',    'Tokyo'):   60,
-    ('Pens',    'Denver'):    40,
+    ('Pencils',  'Tokyo'):   60,
+    ('Pens',    'Detroit'):    40,
     ('Pens',    'Boston'):   -40,
     ('Pens',    'New York'): -30,
-    ('Pens',    'Seattle'):  -30}
+    ('Pens',    'Seattle'):  -30,
+    ('Pens', 'LA'): -10,
+    ('Pens', 'JerseyCity'): -10,
+    ('Pens', 'Tokyo'): 60,
+}
 
 # create optimization model:
 model = gp.Model('maximum network flow')
@@ -84,10 +65,10 @@ lb = {edge:-val for (edge,val) in data_dict.items()}
 
 #print("edgestupleist", edges_tuplelist)
 # create gurobi variables:
-flow = model.addVars(commodities,edges_tuplelist, name="flow", lb=lb, ub=ub)
+flow = model.addVars(commodities,edges_tuplelist, obj=cost, name="flow", lb=lb, ub=ub)
 
-for h in commodities:
-    model.setObjective(flow[h,'Detroit','Boston'] + flow[h,'Detroit','New York'] + flow[h, 'Detroit','Seattle'] )
+#for h in commodities:
+   # model.setObjective(flow[h,'Detroit','Boston'] + flow[h,'Detroit','New York'] + flow[h, 'Detroit','Seattle'] )
 #model.setObjective(sum(flow['Detroit','*'], gp.GRB.MAXIMIZE))
 
 
