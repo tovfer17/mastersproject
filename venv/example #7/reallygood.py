@@ -1,6 +1,4 @@
 
-#https://www.inf.ufpr.br/andre/textos/Understanding_and_Using_Linear_Programming.pdf
-#https://energie.labs.fhv.at/~kr/effsys-en/Gurobi.html
 
 import gurobipy as gp
 from gurobipy import GRB
@@ -39,12 +37,13 @@ inter_nodes_list = nodes_list
 inter_nodes_list.remove('s')
 inter_nodes_list.remove('t')
 
-model.addConstrs( (flow.sum('*',j) == flow.sum(j,'*')
+model.addConstrs( (flow.sum('*',j)  == flow.sum(j,'*')
                    for j in inter_nodes_list), "node");
 
 # print the model:
 model.update()
 model.display()
+model.write("network.lp")
 if True:  # suppress verbose output
     model.Params.OutputFlag = 0
 

@@ -1,7 +1,4 @@
-# reference with link:
-# https://www.educative.io/edpresso/how-to-implement-a-graph-in-python
-# https://stackoverflow.com/questions/28372127/add-edge-weights-to-plot-output-in-networkx
-# https://networkx.org/documentation/latest/auto_examples/drawing/plot_weighted_graph.html
+
 
 # Add a vertex to the set of vertices and the graph
 import networkx as netx  # nice (di-)graph Python package
@@ -126,21 +123,39 @@ def max_flow():
     global weight
 
     cost = {
-        ('a', 's', 'x'): 10,
-        ('a', 's', 'z'): 20,
-        ('a', 's', 'w'): 60,
-        ('a', 's', 'y'): 40,
-        ('a', 't', 'x'): 40,
-        ('a', 't', 'z'): 30,
-        ('a', 't', 'w'): 20,
-        ('a', 't', 'y'): 20,
-
+        ('Pencils', 'Detroit', 'Boston'): 10,
+        ('Pencils', 'Detroit', 'New York'): 20,
+        ('Pencils', 'Detroit', 'Seattle'): 30,
+        ('Pencils', 'Detroit', 'LA'): 40,
+        ('Pencils', 'Detroit', 'JerseyCity'): 10,
+        ('Pencils', 'Detroit', 'Tokyo'): 20,
+        ('Pens', 'Detroit', 'Boston'): 10,
+        ('Pens', 'Detroit', 'New York'): 20,
+        ('Pens', 'Detroit', 'Seattle'): 30,
+        ('Pens', 'Detroit', 'LA'): 40,
+        ('Pens', 'Detroit', 'JerseyCity'): 50,
+        ('Pens', 'Detroit', 'Tokyo'): 25,
     }
 
     thresdem = 0.8  # density of demand mesh
     #dem = [50,60,-50,-50,-10,60,40,-40,-30,-30]
     #dem = [0,0,0,0,0,0,0,0,0,0]
-    dem = [50, -50, -60, 60, -10,-60]
+    dem = {
+        ('Pencils', 'Detroit'): 50,
+        ('Pencils', 'Boston'): -50,
+        ('Pencils', 'New York'): -50,
+        ('Pencils', 'Seattle'): -10,
+        ('Pencils', 'LA'): -10,
+        ('Pencils', 'JerseyCity'): -10,
+        ('Pencils', 'Tokyo'): 60,
+        ('Pens', 'Detroit'): 40,
+        ('Pens', 'Boston'): -40,
+        ('Pens', 'New York'): -30,
+        ('Pens', 'Seattle'): -30,
+        ('Pens', 'LA'): -10,
+        ('Pens', 'JerseyCity'): -10,
+        ('Pens', 'Tokyo'): 60,}
+    #
 
 
        # for j in range(vertices_no):
@@ -154,7 +169,7 @@ def max_flow():
 
     #dem.append( my_randoms)
 
-    print("This is a random demand for each node", dem)
+    print("This is a  demand for each node with com", dem)
 
 
     listkeyPair=[]
@@ -175,7 +190,7 @@ def max_flow():
     print("The dictionary after the merge of the pairs of nodes with the capacities:")
     print (capacity)
 
-    test = ['a']
+    test = ['Pencils', 'Pens']
     f= tuple(test)
     print(f)
 
@@ -191,14 +206,16 @@ def max_flow():
     print("lsit of actual nodes:", listactualnodes)
 
 
-    com,demand =gp.multidict(dict(zip(listnodes,dem)))
-    print("The dictionary after the merge of the commodity with the nodes with demands :")
-    print(com)
-    print(demand)
+    #com,demand =gp.multidict(dict(zip(listnodes,dem)))
+   # print("The dictionary after the merge of the commodity with the nodes with demands :")
+    #print(com)
+    #print(demand)
 
+    inter_nodes_list = listactualnodes
 
-
-
+    inter_nodes_list.remove('Detroit')
+    inter_nodes_list.remove('Tokyo')
+    print("inter", inter_nodes_list)
 
     #*******************************************************************************************************************
 
@@ -210,17 +227,17 @@ def max_flow():
     m.update()
 
      #Arc-capacity constraints
-    for x,y in di:
-       m.addConstr(sum(flow[h, x, y] for h in f) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+   # for x,y in di:
+       #m.addConstr(sum(flow[h, x, y] for h in f) <= capacity[x, y], "cap[%s, %s]" % (x, y))
 
 
      #Flow-conservation constraints
     # they require that, for each commodity and node, the sum of the flow into the node
     # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
     m.addConstrs(
-        (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demand[h,y]   ==
+        (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + dem[h,y]   ==
           gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
-          for h in f for y in listactualnodes), "node")
+          for h in f for y in inter_nodes_list), "node")
 
     # Compute optimal solutions
     m.optimize()
@@ -233,49 +250,48 @@ def max_flow():
 
 
     # Print solution
-    if m.status == GRB.OPTIMAL:
-       solution = m.getAttr('x', flow)
-       for h in f:
-           print('\nOptimal flows for %s:' % h)
-           for x, y in di:
-                    if solution[h,x, y] > 0:
-                        print('%s -> %s: %g' % (x, y, solution[x, y]))
+    #if m.status == GRB.OPTIMAL:
+      # solution = m.getAttr('x', flow)
+       #for h in f:
+           #print('\nOptimal flows for %s:' % h)
+           #for x, y in di:
+                    #if solution[h,x, y] > 0:
+                       # print('%s -> %s: %g' % (x, y, solution[x, y]))
+
+    # print solution: optimal value and optimal point
+    print('Obj: %g' % m.objVal)
+     #print(f"optimal value = {model.objVal:.2f}")
+    for v in m.getVars():
+       print('%s %g' % (v.varName, v.x))
+
 
 #***********************************************************************************************************************
 # Add vertices to the graph
-add_vertex("s")
-add_vertex("x")
-add_vertex("z")
-add_vertex("t")
-add_vertex("w")
-add_vertex("y")
+add_vertex("Detroit")
+add_vertex("Boston")
+add_vertex("New York")
+add_vertex("Seattle")
+add_vertex("LA")
+add_vertex("JerseyCity")
+add_vertex("Tokyo")
+
 
 # Add the edges between the vertices by specifying
 # the from and to vertex along with the edge weights.
 
 
-#add_edge("s", "x", 1000)
-#add_edge("s", "z", 3000)
-#add_edge("s", "w", 2000)
-#add_edge("s", "y", 1500)
-#add_edge("t", "x", 1000)
-#add_edge("t", "z", 4000)
-#add_edge("t", "w", 2000)
-#add_edge("t", "y", 1500)
+add_edge("Detroit", "Boston", 30)
+add_edge("Detroit", "New York", 40)
+add_edge("Detroit", "Seattle", 50)
+add_edge("Boston", "New York", 60)
+add_edge("Boston", "LA", 90)
+add_edge("New York", "JerseyCity", 12)
+add_edge("Seattle", "JerseyCity", 23)
+add_edge("Seattle", "LA", 56)
+add_edge("LA", "Tokyo", 20)
+add_edge("JerseyCity", "Tokyo", 10)
 
 
-add_edge("s", "x", 1000)
-add_edge("x", "z", 3000)
-add_edge("x", "y", 1300)
-add_edge("z", "x", 2000)
-add_edge("z", "t", 4000)
-add_edge("z", "w", 1000)
-add_edge("w", "t", 2000)
-add_edge("w", "y", 1000)
-add_edge("y", "s", 1500)
-add_edge("y", "x", -1300)
-add_edge("y", "z", 1500)
-add_edge("y", "w", 2000)
 
 
 

@@ -1,5 +1,8 @@
 #https://www.inf.ufpr.br/andre/textos/Understanding_and_Using_Linear_Programming.pdf
 #https://energie.labs.fhv.at/~kr/effsys-en/Gurobi.html
+#https://www.youtube.com/watch?v=RqSMklpCTtA
+#https://www.youtube.com/watch?v=y095F10iNzk
+
 
 import gurobipy as gp
 from gurobipy import GRB
@@ -68,7 +71,7 @@ lb = {edge:-val for (edge,val) in data_dict.items()}
 flow = model.addVars(commodities,edges_tuplelist, obj=cost, name="flow", lb=lb, ub=ub)
 
 #for h in commodities:
-   # model.setObjective(flow[h,'Detroit','Boston'] + flow[h,'Detroit','New York'] + flow[h, 'Detroit','Seattle'] )
+#model.setObjective(flow['Pencils','Detroit','Boston'] + flow['Pencils','Detroit','New York'] + flow['Pencils', 'Detroit','Seattle']+ flow['Pens','Detroit','Boston'] + flow['Pens','Detroit','New York'] + flow['Pens', 'Detroit','Seattle'])
 #model.setObjective(sum(flow['Detroit','*'], gp.GRB.MAXIMIZE))
 
 
@@ -81,16 +84,19 @@ print("inter", inter_nodes_list)
 
 
 #model.addConstrs( (flow.sum(h,'*',j) == flow.sum(h,j,'*')
-                 # for h in commodities for j in inter_nodes_list), "node");
+               #   for h in commodities for j in inter_nodes_list), "node");
 
 #for x, y in edges_tuplelist:
   #  model.addConstr(gp.quicksum(flow[h, x, y] for h in commodities) <= data_dict[x, y],
                # 'cap_%s_%s' % (x, y))
-for h in commodities:
-    model.addConstrs( (flow.sum(h,'*',j) +  inflow[h, j] == flow.sum(h,j,'*')
-                   for j in inter_nodes_list), "node");
+
+
+#for h in commodities:
+model.addConstrs( (flow.sum(h,'*',j) +  inflow[h, j] == flow.sum(h,j,'*')
+                   for h in commodities for j in inter_nodes_list), "node")
 
 # print the model:
+model.optimize()
 model.update()
 model.display()
 if True:  # suppress verbose output

@@ -19,13 +19,25 @@ Folder Breakdown
     EXAMPLE #5 - COMPONENT IMPORTANCE OF MULTI-COMMODITY NETWORKS -GUROBI
         *https://shareok.org/bitstream/handle/11244/44222/2016_Whitman_Mackenzie_Thesis.pdf?sequence=2&isAllowed=y
 
-     EXAMPLE #6- EXAMPLE_MULTICOMMODITY_FLOW_PY -FICO
-        *https://www.fico.com/fico-xpress-optimization/docs/latest/examples/python/GUID-71F89332-4A0A-3DD1-8471-0F8769F440A7.html
+     EXAMPLE #6- FICO
+        EXAMPLE_MULTICOMMODITY_FLOW_PY -
+                 *https://www.fico.com/fico-xpress-optimization/docs/latest/examples/python/GUID-71F89332-4A0A-3DD1-8471-0F8769F440A7.html
+         FICO EXAMPLE OF MIN COST FLOW PROBLEM
+                 *https://www.fico.com/fico-xpress-optimization/docs/latest/examples/python/GUID-C88E2964-F7ED-35CC-8200-CF404BBCE3E2.html
 
     EXAMPLE #7- NETFLOW_PY_EXAMPLE-GUROBI
         *https://www.gurobi.com/documentation/9.1/quickstart_mac/cs_netflow_py_example.html
-    EXAMPLE #8 - FICO EXAMPLE OF MIN COST FLOW PROBLEM
-        *https://www.fico.com/fico-xpress-optimization/docs/latest/examples/python/GUID-C88E2964-F7ED-35CC-8200-CF404BBCE3E2.html
+        other related resources: 
+            #https://www.inf.ufpr.br/andre/textos/Understanding_and_Using_Linear_Programming.pdf
+            #https://energie.labs.fhv.at/~kr/effsys-en/Gurobi.html
+            #https://www.youtube.com/watch?v=NFaFMGWj1Hc
+            #https://www.youtube.com/watch?v=RqSMklpCTtA
+            #https://www.youtube.com/watch?v=y095F10iNzk
+
+   
+    EXAMPLE #9 -TROPOHY (package didnt work)
+        
+        
      OTHER_SOURCES
         * Dash for Beginners
                  https://www.datacamp.com/community/tutorials/learn-build-dash-python
@@ -45,3 +57,8 @@ Folder Breakdown
 
         *Exploring and Analyzing Network Data with Python
                   https://programminghistorian.org/en/lessons/exploring-and-analyzing-network-data-with-python
+
+    # reference with link(was in the matrixwithgurobi file):
+    # https://www.educative.io/edpresso/how-to-implement-a-graph-in-python
+    # https://stackoverflow.com/questions/28372127/add-edge-weights-to-plot-output-in-networkx
+    # https://networkx.org/documentation/latest/auto_examples/drawing/plot_weighted_graph.html
