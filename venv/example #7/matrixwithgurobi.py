@@ -224,12 +224,18 @@ def max_flow():
 
     # Create variables
     flow = m.addVars( f,di,obj=cost, name="flow")
+   # for m in range(len(len(di))):
+        #    for k in range(len(f)):
+                  #  flow=m.addVars(f, di, obj=cost, name="flow")
     m.update()
 
      #Arc-capacity constraints
    # for x,y in di:
        #m.addConstr(sum(flow[h, x, y] for h in f) <= capacity[x, y], "cap[%s, %s]" % (x, y))
-
+    #for m in range(len(di)):
+      #  m.addConstr(quicksum(flow[h,m]
+                          #   for k in range(len(f)))
+                            # <= capacity[x, y], "cap[%s, %s]" % (x, y))
 
      #Flow-conservation constraints
     # they require that, for each commodity and node, the sum of the flow into the node
@@ -290,10 +296,6 @@ add_edge("Seattle", "JerseyCity", 23)
 add_edge("Seattle", "LA", 56)
 add_edge("LA", "Tokyo", 20)
 add_edge("JerseyCity", "Tokyo", 10)
-
-
-
-
 
 
 
