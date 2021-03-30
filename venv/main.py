@@ -1,5 +1,3 @@
-
-
 # Add a vertex to the set of vertices and the graph
 import networkx as netx  # nice (di-)graph Python package
 import matplotlib.pyplot as plt
@@ -7,17 +5,30 @@ import numpy as np
 import math
 import gurobipy as gp
 from gurobipy import GRB
+import xlrd
 
 # Driver code
-# stores the vertices in the graph
 vertices = []
-# stores the number of vertices in the graph
 vertices_no = 0
 weight = []
 graph = []
+lnode=[]
+cnode=[]
+capnode=[]
+vnode=[]
 
 G = netx.DiGraph()
+loc = ("/Users/fer/Desktop/data/networkflow.xls")
 
+wb = xlrd.open_workbook(loc)
+vertex=wb.sheet_by_index(0)
+leavingnodes = wb.sheet_by_index(1)
+comingnodes=wb.sheet_by_index(2)
+capacities=wb.sheet_by_index(3)
+
+
+
+################ adding vertex from xcel ######################
 
 def add_vertex(v):
     global graph
@@ -36,8 +47,7 @@ def add_vertex(v):
             temp.append(0)
         graph.append(temp)
 
-
-# Add an edge between vertex v1 and v2 with edge weight e
+################ adding vertex from xcel ######################
 def add_edge(v1, v2, e):
     global graph
     global vertices_no
@@ -56,8 +66,7 @@ def add_edge(v1, v2, e):
         index2 = vertices.index(v2)
         graph[index1][index2] = e
 
-
-# Print the graph
+################ print the pair of nodes and edgeweight ######################
 def print_graph():
     global graph
     global vertices_no
@@ -68,12 +77,11 @@ def print_graph():
                       " edge weight: ", graph[i][j])
                 #print vertices
 
-def convert_graph():
+def draw_graph():
     global graph
     global vertices_no
     global vertices
     global weight
-
 
     for i in range(vertices_no):
         for j in range(vertices_no):
@@ -82,28 +90,15 @@ def convert_graph():
                 G.add_edge(vertices[i], vertices[j], weight=weight)
 
 
-    # edlist = [(u, v) for (u, v, d) in G.edges(data=True)]
-
     epos = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] > 0]
-    eneg = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] < 0]
 
     pos = netx.spring_layout(G, k=150, seed=200)  # positions for all nodes - seed for reproducibility
-
     # nodes
     netx.draw_networkx_nodes(G, pos)
-
     # edges
-    # netx.draw_networkx_edges(G, pos, edgelist=edlist, width=6)
-
     labels = netx.get_edge_attributes(G, 'weight')
     netx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
-
     netx.draw_networkx_edges(G, pos, edgelist=epos, width=10, edge_color="orange")
-
-    netx.draw_networkx_edges(
-        G, pos, edgelist=eneg, width=6, alpha=0.5, edge_color="blue", style="dashed"
-    )
-
     # labels
     netx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
 
@@ -112,64 +107,16 @@ def convert_graph():
     plt.axis("off")
     plt.tight_layout()
 
-    # plt.show()
+    plt.show()
+    plt.savefig("greatgraph.png")
 
-
+################ multicommodity######################
 
 def max_flow():
     global graph
     global vertices_no
     global vertices
     global weight
-
-    cost = {
-        ('Pencils', 'Detroit', 'Boston'): 10,
-        ('Pencils', 'Detroit', 'New York'): 20,
-        ('Pencils', 'Detroit', 'Seattle'): 30,
-        ('Pencils', 'Detroit', 'LA'): 40,
-        ('Pencils', 'Detroit', 'JerseyCity'): 10,
-        ('Pencils', 'Detroit', 'Tokyo'): 20,
-        ('Pens', 'Detroit', 'Boston'): 10,
-        ('Pens', 'Detroit', 'New York'): 20,
-        ('Pens', 'Detroit', 'Seattle'): 30,
-        ('Pens', 'Detroit', 'LA'): 40,
-        ('Pens', 'Detroit', 'JerseyCity'): 50,
-        ('Pens', 'Detroit', 'Tokyo'): 25,
-    }
-
-    thresdem = 0.8  # density of demand mesh
-    #dem = [50,60,-50,-50,-10,60,40,-40,-30,-30]
-    #dem = [0,0,0,0,0,0,0,0,0,0]
-    dem = {
-        ('Pencils', 'Detroit'): 50,
-        ('Pencils', 'Boston'): -50,
-        ('Pencils', 'New York'): -50,
-        ('Pencils', 'Seattle'): -10,
-        ('Pencils', 'LA'): -10,
-        ('Pencils', 'JerseyCity'): -10,
-        ('Pencils', 'Tokyo'): 60,
-        ('Pens', 'Detroit'): 40,
-        ('Pens', 'Boston'): -40,
-        ('Pens', 'New York'): -30,
-        ('Pens', 'Seattle'): -30,
-        ('Pens', 'LA'): -10,
-        ('Pens', 'JerseyCity'): -10,
-        ('Pens', 'Tokyo'): 60,}
-    #
-
-
-       # for j in range(vertices_no):
-            #if i != j and np.random.random() < thresdem:
-                #dem.append((vertices[i], vertices[j], math.ceil(200 * np.random.random())))
-              #dem.append((math.ceil(200 * np.random.random())))
-    #print("This is a random demand for each node", dem)
-            #if i != j:
-   # np.set_printoptions(precision=1)
-   # dem.append((math.ceil(200 * np.random.random())))
-
-    #dem.append( my_randoms)
-
-    print("This is a  demand for each node with com", dem)
 
 
     listkeyPair=[]
@@ -206,18 +153,12 @@ def max_flow():
     print("lsit of actual nodes:", listactualnodes)
 
 
-    #com,demand =gp.multidict(dict(zip(listnodes,dem)))
-   # print("The dictionary after the merge of the commodity with the nodes with demands :")
-    #print(com)
-    #print(demand)
-
     inter_nodes_list = listactualnodes
 
     inter_nodes_list.remove('Detroit')
     inter_nodes_list.remove('Tokyo')
     print("inter", inter_nodes_list)
 
-    #*******************************************************************************************************************
 
     # Create optimization model
     m = gp.Model('netflow')
@@ -241,7 +182,7 @@ def max_flow():
     # they require that, for each commodity and node, the sum of the flow into the node
     # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
     m.addConstrs(
-        (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + dem[h,y]   ==
+        (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + inflow[h,y]   ==
           gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
           for h in f for y in inter_nodes_list), "node")
 
@@ -251,8 +192,6 @@ def max_flow():
     print (m.display())
 
     print("hi", m.status)
-
-
 
 
     # Print solution
@@ -271,36 +210,40 @@ def max_flow():
        print('%s %g' % (v.varName, v.x))
 
 
-#***********************************************************************************************************************
-# Add vertices to the graph
-add_vertex("Detroit")
-add_vertex("Boston")
-add_vertex("New York")
-add_vertex("Seattle")
-add_vertex("LA")
-add_vertex("JerseyCity")
-add_vertex("Tokyo")
 
+#################Driver#########################
 
-# Add the edges between the vertices by specifying
-# the from and to vertex along with the edge weights.
+p = 1
+while True:
+    try:
+        v = vertex.cell_value(p, 0)
+        vnode.append(v)
+        add_vertex(v)
+        p = p+1
+    except IndexError:
+        break
+i = 1
 
+while True:
+    try:
 
-add_edge("Detroit", "Boston", 30)
-add_edge("Detroit", "New York", 40)
-add_edge("Detroit", "Seattle", 50)
-add_edge("Boston", "New York", 60)
-add_edge("Boston", "LA", 90)
-add_edge("New York", "JerseyCity", 12)
-add_edge("Seattle", "JerseyCity", 23)
-add_edge("Seattle", "LA", 56)
-add_edge("LA", "Tokyo", 20)
-add_edge("JerseyCity", "Tokyo", 10)
+        l = leavingnodes.cell_value(i, 0)
+        lnode.append(l)
+        c = comingnodes.cell_value(i, 0)
+        cnode.append(c)
+        cap = capacities.cell_value(i,2)
+        capnode.append(cap)
+        add_edge(l,c,cap)
+
+        i = i+1
+    except IndexError:
+        break
 
 
 
 print_graph()
 print("Internal representation: ", graph)
-convert_graph()
-max_flow()
+draw_graph()
+
+
 

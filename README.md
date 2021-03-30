@@ -37,6 +37,11 @@ Folder Breakdown
    
     EXAMPLE #9 -TROPOHY (package didnt work)
         
+    EXAMPLE #10- DIET (GUROBI EXAMPLE TO DOWNLOAD DATA FROM XCEL)
+        *https://www.gurobi.com/documentation/9.1/examples/diet2_py.html
+        *https://www.gurobi.com/documentation/9.1/examples/diet_py.html
+        *https://www.gurobi.com/documentation/9.1/examples/diet4_py.html
+        *https://www.gurobi.com/documentation/9.1/examples/dietmodel_py.html
         
      OTHER_SOURCES
         * Dash for Beginners

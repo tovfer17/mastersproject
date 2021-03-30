@@ -69,4 +69,4 @@ nutritionValues = {
 
 
 dietmodel.solve(categories, minNutrition, maxNutrition,
-                foods, cost, nutritionValues)
+                     foods, cost, nutritionValues)

@@ -117,7 +117,7 @@ def convert_graph():
     plt.tight_layout()
 
    # plt.show()
-    plt.savefig("graph.png")
+
 
 
 def max_flow():

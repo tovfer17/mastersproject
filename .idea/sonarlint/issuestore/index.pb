@@ -63,3 +63,11 @@ J
 venv/example #7/network.lp,3/b/3b4ca24ef92fd449c953136e3b5a12664bfa1d5a
 S
 #venv/example #7/matrixwithgurobi.py,b/3/b39e0c1e01f34b2bb9aa26ffc5078e0861096b8d
+L
+venv/example#10/dietmodel.py,6/a/6a0a114b23bc48e5a9c27bada9f967785200f2d4
+G
+venv/example#10/diet.py,8/f/8f9ac504fa3d206d11a9014104ef6db1c7b27fc7
+H
+venv/example#10/diet4.py,6/6/661a9967d7130f4f01ab8e3bdad7e7eb20fe8c0e
+=
+venv/mainn.py,d/8/d817bc35abe29457580c65f1afa5b8071dfb9182
