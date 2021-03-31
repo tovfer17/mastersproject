@@ -58,18 +58,21 @@ for rx in range(sh.nrows):
 
 sh = book.sheet_by_name("Nutrition")
 nutritionValues = {}
-i = 1
 
+i = 1
 for food in foods:
     j = 2
+    print("FOOD:", food)
     for cat in categories:
         nutritionValues[food, cat] = sh.cell_value(i,j)
+        print("i:",i)
+        print("j:",j)
         print("TEST FOOD:",food)
         print("TEST CAT",cat)
         print("TEST:",nutritionValues[food, cat])
         i += 1
-    j += 1
-
+   # j += 1
+print("LLLLL",nutritionValues["chicken","protein"])
 for rx in range(sh.nrows):
     print(sh.row(rx))
 

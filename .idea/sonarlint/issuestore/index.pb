@@ -69,5 +69,7 @@ G
 venv/example#10/diet.py,8/f/8f9ac504fa3d206d11a9014104ef6db1c7b27fc7
 H
 venv/example#10/diet4.py,6/6/661a9967d7130f4f01ab8e3bdad7e7eb20fe8c0e
-=
-venv/mainn.py,d/8/d817bc35abe29457580c65f1afa5b8071dfb9182
+K
+venv/example#10/__init__.py,e/e/eeb42ad3ebff128ad730ccdaaf0c14bd479bf745
+<
+venv/main.py,2/4/243bb7b6f8ec7ead8aee531ec25c8555dc8bb918

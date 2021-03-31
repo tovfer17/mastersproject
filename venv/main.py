@@ -22,9 +22,10 @@ loc = ("/Users/fer/Desktop/data/networkflow.xls")
 
 wb = xlrd.open_workbook(loc)
 vertex=wb.sheet_by_index(0)
-leavingnodes = wb.sheet_by_index(1)
-comingnodes=wb.sheet_by_index(2)
-capacities=wb.sheet_by_index(3)
+capacities=wb.sheet_by_index(1)
+commodities=wb.sheet_by_index(2)
+cost=wb.sheet_by_index(3)
+
 
 
 
@@ -227,9 +228,9 @@ i = 1
 while True:
     try:
 
-        l = leavingnodes.cell_value(i, 0)
+        l = capacities.cell_value(i, 0)
         lnode.append(l)
-        c = comingnodes.cell_value(i, 0)
+        c = capacities.cell_value(i, 1)
         cnode.append(c)
         cap = capacities.cell_value(i,2)
         capnode.append(cap)
@@ -244,6 +245,3 @@ while True:
 print_graph()
 print("Internal representation: ", graph)
 draw_graph()
-
-
-
