@@ -1,5 +1,4 @@
 
-
 # Add a vertex to the set of vertices and the graph
 import networkx as netx  # nice (di-)graph Python package
 import matplotlib.pyplot as plt
@@ -123,18 +122,24 @@ def max_flow():
     global weight
 
     cost = {
-        ('Pencils', 'Detroit', 'Boston'): 10,
-        ('Pencils', 'Detroit', 'New York'): 20,
+        ('Pencils', 'Detroit', 'Boston'):10,
+        ('Pencils', 'Detroit', 'New York'):20,
         ('Pencils', 'Detroit', 'Seattle'): 30,
-        ('Pencils', 'Detroit', 'LA'): 40,
-        ('Pencils', 'Detroit', 'JerseyCity'): 10,
-        ('Pencils', 'Detroit', 'Tokyo'): 20,
-        ('Pens', 'Detroit', 'Boston'): 10,
-        ('Pens', 'Detroit', 'New York'): 20,
-        ('Pens', 'Detroit', 'Seattle'): 30,
-        ('Pens', 'Detroit', 'LA'): 40,
-        ('Pens', 'Detroit', 'JerseyCity'): 50,
-        ('Pens', 'Detroit', 'Tokyo'): 25,
+        ('Pencils', 'New York', 'JerseyCity'):10,
+        ('Pencils', 'Boston','New York'):30,
+        ('Pencils', 'Boston', 'LA'):60,
+        ('Pencils', 'JerseyCity','Tokyo'):50,
+        ('Pencils', 'LA','Tokyo'): 40,
+        ('Pencils', 'Seattle', 'LA'):30,
+        ('Pencils',  'Seattle','JerseyCity'):45,
+
+       #('Pencils', 'Detroit', 'Tokyo'): 20,
+       #('Pens', 'Detroit', 'Boston'): 10,
+       #('Pens', 'Detroit', 'New York'): 20,
+       #('Pens', 'Detroit', 'Seattle'): 30,
+
+
+      # ('Pens', 'Detroit', 'Tokyo'): 25,
     }
 
     thresdem = 0.8  # density of demand mesh
@@ -147,15 +152,15 @@ def max_flow():
         ('Pencils', 'Seattle'): -10,
         ('Pencils', 'LA'): -10,
         ('Pencils', 'JerseyCity'): -10,
-        ('Pencils', 'Tokyo'): 60,
-        ('Pens', 'Detroit'): 40,
-        ('Pens', 'Boston'): -40,
-        ('Pens', 'New York'): -30,
-        ('Pens', 'Seattle'): -30,
-        ('Pens', 'LA'): -10,
-        ('Pens', 'JerseyCity'): -10,
-        ('Pens', 'Tokyo'): 60,}
-    #
+        ('Pencils', 'Tokyo'): -60,
+     #  ('Pens', 'Detroit'): 40,
+      # ('Pens', 'Boston'): -40,
+       #('Pens', 'New York'): -30,
+      # ('Pens', 'Seattle'): -30,
+      # ('Pens', 'LA'): -10,
+      # ('Pens', 'JerseyCity'): -10,
+      # ('Pens', 'Tokyo'): 60,
+}
 
 
        # for j in range(vertices_no):
@@ -190,7 +195,7 @@ def max_flow():
     print("The dictionary after the merge of the pairs of nodes with the capacities:")
     print (capacity)
 
-    test = ['Pencils', 'Pens']
+    test = ['Pencils']
     f= tuple(test)
     print(f)
 
@@ -230,8 +235,8 @@ def max_flow():
     m.update()
 
      #Arc-capacity constraints
-   # for x,y in di:
-       #m.addConstr(sum(flow[h, x, y] for h in f) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+    for x,y in di:
+       m.addConstr(sum(flow[h, x, y] for h in f) <= capacity[x, y], "cap[%s, %s]" % (x, y))
     #for m in range(len(di)):
       #  m.addConstr(quicksum(flow[h,m]
                           #   for k in range(len(f)))
@@ -286,8 +291,8 @@ add_vertex("Tokyo")
 # the from and to vertex along with the edge weights.
 
 
-add_edge("Detroit", "Boston", 30)
-add_edge("Detroit", "New York", 40)
+add_edge("Detroit", "Boston", 65)
+add_edge("Detroit", "New York",70)
 add_edge("Detroit", "Seattle", 50)
 add_edge("Boston", "New York", 60)
 add_edge("Boston", "LA", 90)
