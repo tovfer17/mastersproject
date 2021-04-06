@@ -24,8 +24,8 @@ nodes=[]
 G = netx.DiGraph()
 
 
-
-loc = ("/Users/fer/Desktop/data/networkflow.xls")
+#loc = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
+loc=("/Users/fer/PycharmProjects/project/networkflow.xls")
 
 wb = xlrd.open_workbook(loc)
 vertex=wb.sheet_by_index(0)
@@ -116,8 +116,8 @@ def draw_graph():
     plt.axis("off")
     #plt.tight_layout()
 
-    #plt.show()
-    plt.savefig("testgraph.png")
+    plt.show()
+    #plt.savefig("graphp.png")
 
 ################ multicommodity######################
 
@@ -172,8 +172,8 @@ def max_flow(test,cost,demands):
 
     # Create variables
     #flow = m.addVars(test,di, obj=cost, name="flow")
-    flow = m.addVars(test, di,  name="flow")
-    m.setObjective(flow.prod(cost), GRB.MINIMIZE)
+    flow = m.addVars(test, di,obj=cost,  name="flow")
+    #m.setObjective(flow.prod(cost), GRB.MINIMIZE)
 
     m.update()
 
@@ -259,18 +259,24 @@ while True:
     except IndexError:
         break
 
-s = 1
-while True:
-    try:
-        for commo in comm:
-           print("Commodity:", commo)
-           for leave in leavingnode:
-                   cnode = capacities.cell_value(s, 1)
-                   allCost[commo,leave,cnode]=cost.cell_value(s,3)
-                   print("cost:", allCost[commo,leave,cnode])
-                   s = s+1
-    except IndexError:
-        break
+
+
+
+
+for commo in comm:
+    s = 1
+    j=3
+    print("Commodity:", commo)
+    for leave in leavingnode:
+        print("leave",leave)
+        cnode = capacities.cell_value(s, 1)
+        print('coming',cnode)
+        allCost[commo,leave,cnode]=cost.cell_value(s,j)
+        print("cost:", allCost[commo,leave,cnode])
+        s = s+1
+    print("this is j:",j)
+
+
 
 z = 1
 while True:
