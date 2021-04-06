@@ -28,30 +28,11 @@ arcs, capacity = gp.multidict({
     ('Denver',  'Seattle'):  120})
 #print(arcs)
 #print(capacity)
-#arcs, capacity = gp.multidict({
-   # ('Detroit', 'Boston'):   130,
-    #('Detroit', 'New York'): 140,
-    #('Detroit', 'Seattle'):  135,
-   # ('Denver',  'Boston'):   125,
-   # ('Denver',  'New York'): 125,
-  #  ('Denver',  'Seattle'):  125})
-#print(arcs)
+
 #print(capacity)
 
 # Cost for triplets commodity-source-destination
-#cost = {
-  #  ('Pencils', 'Detroit', 'Boston'):   10,
-   # ('Pencils', 'Detroit', 'New York'): 20,
-    #('Pencils', 'Detroit', 'Seattle'):  60,
-   # ('Pencils', 'Denver',  'Boston'):   40,
-   # ('Pencils', 'Denver',  'New York'): 40,
-   # ('Pencils', 'Denver',  'Seattle'):  30,
-   # ('Pens',    'Detroit', 'Boston'):   20,
-   # ('Pens',    'Detroit', 'New York'): 20,
-   # ('Pens',    'Detroit', 'Seattle'):  80,
-   # ('Pens',    'Denver',  'Boston'):   60,
-   # ('Pens',    'Denver',  'New York'): 70,
-    #('Pens',    'Denver',  'Seattle'):  30}
+
 cost = {
     ('Pencils', 'Detroit', 'Boston'):   10,
     ('Pencils', 'Detroit', 'New York'): 20,

@@ -111,7 +111,7 @@ def convert_graph():
     plt.axis("off")
     plt.tight_layout()
 
-    # plt.show()
+    plt.show()
 
 
 
@@ -143,7 +143,7 @@ def max_flow():
     }
 
     thresdem = 0.8  # density of demand mesh
-    #dem = [50,60,-50,-50,-10,60,40,-40,-30,-30]
+    #dem = [50,60,-50,-50,-10,60,40,-40,-30,-30
     #dem = [0,0,0,0,0,0,0,0,0,0]
     dem = {
         ('Pencils', 'Detroit'): 50,

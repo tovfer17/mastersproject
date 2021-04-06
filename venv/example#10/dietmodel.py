@@ -21,19 +21,7 @@ def solve(categories, minNutrition, maxNutrition, foods, cost,
     # The objective is to minimize the costs
     m.setObjective(buy.prod(cost), GRB.MINIMIZE)
 
-    for c in categories:
-      print(maxNutrition[c])
-
-    for c in categories:
-        print(minNutrition[c])
-
-    for f in foods:
-        print(f)
-        print(cost[f])
-
-    for f,c in nutritionValues:
-        print(f, c, nutritionValues[f,c])
-
+  
     # Nutrition constraints
     m.addConstrs((gp.quicksum(nutritionValues[f, c] * buy[f] for f in foods) ==
                  [minNutrition[c], maxNutrition[c]] for c in categories), "_")
