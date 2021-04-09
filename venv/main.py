@@ -25,7 +25,7 @@ G = netx.DiGraph()
 
 
 #loc = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
-loc=("/Users/fer/PycharmProjects/project/networkflow2a.xls")
+loc=("/Users/fer/PycharmProjects/project/networkflow2b.xls")
 
 wb = xlrd.open_workbook(loc)
 vertex=wb.sheet_by_index(0)
