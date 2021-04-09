@@ -25,7 +25,7 @@ G = netx.DiGraph()
 
 
 #loc = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
-loc=("/Users/fer/PycharmProjects/project/networkflow.xls")
+loc=("/Users/fer/PycharmProjects/project/networkflow2a.xls")
 
 wb = xlrd.open_workbook(loc)
 vertex=wb.sheet_by_index(0)
@@ -162,7 +162,9 @@ def max_flow(test,cost,demands):
     inter_nodes_list = listactualnodes
 
     inter_nodes_list.remove(vertices[0])
+    inter_nodes_list.remove(vertices[2])
     inter_nodes_list.remove(vertices[-1])
+    inter_nodes_list.remove(vertices[-2])
     print("inter", inter_nodes_list)
 
     print("demand",demand)
@@ -191,27 +193,17 @@ def max_flow(test,cost,demands):
 
     # Compute optimal solutions
     m.optimize()
-
     print (m.display())
 
-    print("hi", m.status)
-
+    print("if model fesible it will print a 2 .", m.status)
 
     # Print solution
-    #if m.status == GRB.OPTIMAL:
-      # solution = m.getAttr('x', flow)
-       #for h in f:
-           #print('\nOptimal flows for %s:' % h)
-           #for x, y in di:
-                    #if solution[h,x, y] > 0:
-                       # print('%s -> %s: %g' % (x, y, solution[x, y]))
 
     # print solution: optimal value and optimal point
     print('Obj: %g' % m.objVal)
      #print(f"optimal value = {model.objVal:.2f}")
     for v in m.getVars():
        print('%s %g' % (v.varName, v.x))
-
 
 
 #################Driver#########################
