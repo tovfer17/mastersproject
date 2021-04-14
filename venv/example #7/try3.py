@@ -112,6 +112,11 @@ m.optimize()
 print (m.display())
 print("hi", m.status)
 
+for v in m.getVars():
+    print('%s %g' % (v.varName, v.x))
+
+
+
 # Print solution
 if m.status == GRB.OPTIMAL:
     solution = m.getAttr('x', flow)

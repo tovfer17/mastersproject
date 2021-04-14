@@ -1,8 +1,8 @@
 
-<python:S125"Remove this commented out code.(×êœ}8‘ƒ©ÆŠ/
-lpython:S1192/"HDefine a constant instead of duplicating this literal "Vertex " 3 times.(‘îÍûÿÿÿÿ8ªç‰²ˆ/
-€python:S117ƒ"\Rename this local variable "listkeyPair" to match the regular expression ^[_a-z][a-z0-9_]*$.(£‘äíÿÿÿÿÿ8÷èû¢Š/
-spython:S3776|"TRefactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed.(æ¾¦Å8Óº¤Š/
-|python:S117Š"]Rename this local variable "listvalueCap" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ù±ëŒ8÷èû¢Š/
 Dpython:S14817"%Remove the unused local variable "i".(ýìÑ¤8ªç‰²ˆ/
+lpython:S1192/"HDefine a constant instead of duplicating this literal "Vertex " 3 times.(‘îÍûÿÿÿÿ8ªç‰²ˆ/
+spython:S3776|"TRefactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed.(æ¾¦Å8¶×›À‹/
+€python:S117ƒ"\Rename this local variable "listkeyPair" to match the regular expression ^[_a-z][a-z0-9_]*$.(£‘äíÿÿÿÿÿ8÷èû¢Š/
 Bpython:S125W"Remove this commented out code.(ÇÆéùÿÿÿÿ8ªç‰²ˆ/
+|python:S117Š"]Rename this local variable "listvalueCap" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ù±ëŒ8÷èû¢Š/
+<python:S125"Remove this commented out code.(×êœ}8‘ƒ©ÆŠ/

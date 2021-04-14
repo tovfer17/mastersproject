@@ -25,7 +25,7 @@ G = netx.DiGraph()
 
 
 #loc = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
-loc=("/Users/fer/PycharmProjects/project/networkflow2b.xls")
+loc=("/Users/fer/PycharmProjects/project/networkflow2c.xls")
 
 wb = xlrd.open_workbook(loc)
 vertex=wb.sheet_by_index(0)
@@ -161,8 +161,10 @@ def max_flow(test,cost,demands):
 
     inter_nodes_list = listactualnodes
 
+    # removes the first two nodes from the vertex list because its the source node
     inter_nodes_list.remove(vertices[0])
-    inter_nodes_list.remove(vertices[2])
+    inter_nodes_list.remove(vertices[1])
+    # removes the two last nodes from the vertex list because they are the sink nodes
     inter_nodes_list.remove(vertices[-1])
     inter_nodes_list.remove(vertices[-2])
     print("inter", inter_nodes_list)
