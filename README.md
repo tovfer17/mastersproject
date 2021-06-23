@@ -11,7 +11,10 @@ Excel Files Breakdown
     networkflow2a.xls- this is with 2 commodities and 2 sources(boston & detroit)and 2 sinks (tokyo & madrid)
     networkflow2b.xls-this is the one with demand * priority
     networkflow2bcopy.xls - bandwidth and security as commodities
-    networkflow2c.xls - current version on google colab
+    networkflow2c.xls - current newest version on google colab (after break)
+    networkflow2d.xls - new version xls 
+    networkflow2d.xlsx - converted version from the xls file to exports results to excel spreadsheet
+    
     
 
 

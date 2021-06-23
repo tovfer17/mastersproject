@@ -1,14 +1,13 @@
 # Add a vertex to the set of vertices and the graph
 import networkx as netx  # nice (di-)graph Python package
 import matplotlib.pyplot as plt
-import numpy as np
-import math
 import gurobipy as gp
-from gurobipy import GRB
 import xlrd
 import csv
 import pandas as pd
-import xlwt
+import pandas
+from openpyxl import load_workbook
+import pyexcel as fp
 
 # Driver code
 vertices = []
@@ -29,18 +28,17 @@ var_names = []
 var_values = []
 
 
-#loc = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
-loc=("/Users/fer/PycharmProjects/project/networkflow2c.xls")
+#loc1 = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
+loc1=("/Users/fer/PycharmProjects/project/networkflow2d.xls")
+loc2= ("/Users/fer/PycharmProjects/project/networkflow2d.xlsx")
+loc3= ('/Users/fer/PycharmProjects/project/export.csv')
 
-wb = xlrd.open_workbook(loc)
+wb = xlrd.open_workbook(loc1)
 vertex=wb.sheet_by_index(0)
 capacities=wb.sheet_by_index(1)
 commodities=wb.sheet_by_index(2)
 cost=wb.sheet_by_index(3)
 inflow=wb.sheet_by_index(4)
-
-
-
 
 ################ adding vertex from excel ######################
 
@@ -174,8 +172,8 @@ def max_flow(test,cost,demands):
     inter_nodes_list.remove(vertices[-2])
     print("inter", inter_nodes_list)
 
-    print("demand",demand)
-    print("cost",cost)
+    #print("demand",demand)
+    #print("cost",cost)
     # Create optimization model
     m = gp.Model('netflow')
 
@@ -310,5 +308,14 @@ print("allCost",allCost)
 print("Demand",demand)
 max_flow(comm, allCost, demand)
 
-read_file = pd.read_csv('/Users/fer/PycharmProjects/project/export.csv')
-read_file.to_excel('/Users/fer/PycharmProjects/project/networkflow2c copy.xls', index=3, header=False, sheet_name = 'x3')
+read_file = pd.read_csv(loc3)
+fp.save_book_as(file_name=loc1,
+               dest_file_name=loc2)
+
+book = load_workbook(loc2)
+writer = pandas.ExcelWriter(loc2, engine='openpyxl')
+writer.book = book
+
+writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+read_file.to_excel(writer, "Max Z", header= False,startrow=1)
+writer.save()
