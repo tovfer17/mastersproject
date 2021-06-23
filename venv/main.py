@@ -6,6 +6,9 @@ import math
 import gurobipy as gp
 from gurobipy import GRB
 import xlrd
+import csv
+import pandas as pd
+import xlwt
 
 # Driver code
 vertices = []
@@ -22,6 +25,8 @@ start=[]
 cnode=[]
 nodes=[]
 G = netx.DiGraph()
+var_names = []
+var_values = []
 
 
 #loc = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
@@ -175,9 +180,9 @@ def max_flow(test,cost,demands):
     m = gp.Model('netflow')
 
     # Create variables
-    #flow = m.addVars(test,di, obj=cost, name="flow")
-    flow = m.addVars(test, di,obj=cost,  name="flow")
-    #m.setObjective(flow.prod(cost), GRB.MINIMIZE)
+    # flow = m.addVars(test,di, obj=cost, name="flow")
+    flow = m.addVars(test, di, obj=cost, name="flow")
+    # m.setObjective(flow.prod(cost), GRB.MINIMIZE)
 
     m.update()
 
@@ -191,7 +196,7 @@ def max_flow(test,cost,demands):
     m.addConstrs(
         (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demands[h,y]   ==
           gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
-          for h in test for y in inter_nodes_list), "node")
+          for h in test for y in listactualnodes), "node")
 
     # Compute optimal solutions
     m.optimize()
@@ -204,8 +209,17 @@ def max_flow(test,cost,demands):
     # print solution: optimal value and optimal point
     print('Obj: %g' % m.objVal)
      #print(f"optimal value = {model.objVal:.2f}")
-    for v in m.getVars():
-       print('%s %g' % (v.varName, v.x))
+    for var in m.getVars():
+       #print('%s %g' % (v.varName, v.x))
+       if var.X > 0:
+           var_names.append(str(var.varName))
+           var_values.append(var.X)
+
+    # Write to csv
+    with open('/Users/fer/PycharmProjects/project/export.csv', 'wb') as myfile:
+        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+        wr.writerows(zip(var_names, var_values))
+
 
 
 #################Driver#########################
@@ -296,3 +310,5 @@ print("allCost",allCost)
 print("Demand",demand)
 max_flow(comm, allCost, demand)
 
+read_file = pd.read_csv('/Users/fer/PycharmProjects/project/export.csv')
+read_file.to_excel('/Users/fer/PycharmProjects/project/networkflow2c copy.xls', index=3, header=False, sheet_name = 'x3')

@@ -1,8 +1,8 @@
 
 upython:S1192C"QDefine a constant instead of duplicating this literal 'node.data_set_id' 7 times.(­Ô±µúÿÿÿÿ8å´×€ˆ/
 npython:S1192]"ODefine a constant instead of duplicating this literal 'commodity.name' 3 times.( òÃ¬8å´×€ˆ/
-npython:S1192C"JDefine a constant instead of duplicating this literal 'node.name' 7 times.(­Ô±µúÿÿÿÿ8å´×€ˆ/
-python:S1192˜"~Define a constant instead of duplicating this literal 'https://maps.google.com/mapfiles/kml/paddle/blu-circle-lv.png' 3 times.(©»ª8å´×€ˆ/
-upython:S1192]"VDefine a constant instead of duplicating this literal 'commodity.data_set_id' 3 times.( òÃ¬8å´×€ˆ/
 tpython:S117³"URename this local variable "Arcs" to match the regular expression ^[_a-z][a-z0-9_]*$.(ÑªÀ°8å´×€ˆ/
+upython:S1192]"VDefine a constant instead of duplicating this literal 'commodity.data_set_id' 3 times.( òÃ¬8å´×€ˆ/
+python:S1192˜"~Define a constant instead of duplicating this literal 'https://maps.google.com/mapfiles/kml/paddle/blu-circle-lv.png' 3 times.(©»ª8å´×€ˆ/
 tpython:S3776"TRefactor this function to reduce its Cognitive Complexity from 20 to the 15 allowed.(êœ€İ8å´×€ˆ/
+npython:S1192C"JDefine a constant instead of duplicating this literal 'node.name' 7 times.(­Ô±µúÿÿÿÿ8å´×€ˆ/

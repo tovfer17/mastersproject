@@ -2,15 +2,16 @@
 
 
 Excel Files Breakdown
+    
     networkflow.xls- original graph with og capacities, 1 commodity, 1 source and 1 sink
     networkflow1.xls- original graph with og capacities, 2 commodity, 1 source and 1 sink. Doesn't work because its 2 commodities with not double capacities.
     networkflow2.xls- original graph with double capacities, 2 commodity, 1 source and 1 sink. 
-    
     networkflowa.xls- this is with just 1 commodity and 2 sources(boston & detroit) and 1 sink (tokyo)
     networkflowb.xls- this is with 1 commodity and 2 sources(boston & detroit)and 2 sinks (tokyo & madrid)
     networkflow2a.xls- this is with 2 commodities and 2 sources(boston & detroit)and 2 sinks (tokyo & madrid)
     networkflow2b.xls-this is the one with demand * priority
-    
+    networkflow2bcopy.xls - bandwidth and security as commodities
+    networkflow2c.xls - current version on google colab
     
 
 
