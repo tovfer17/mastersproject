@@ -1,0 +1,100 @@
+import gurobipy as gp
+from openpyxl import load_workbook
+
+if_name_ == '_main_':
+# Input excel files with arcs data(sheet 1) and commodities data (sheet2)
+# Generate lista to store 'objects'
+Arcs = []
+Nodes = []
+Commodities = []
+# Open input file(excel) that is in the current folder
+
+loc1=("/Users/fer/PycharmProjects/project/Input_lecct.xlsx")
+
+wb = load_workbook(loc1, read_only=True)
+List_arcs = tuple(wb["Arcs"].iter_rows())
+List_commo = tuple(wb["Commodities"].iter_rows())
+
+
+# Objects
+class Arc:
+    def_init_(self, origin, destination, cost, capacity):
+    self.From = origin
+    self.To = destination
+    self.Cost = cost
+    self.Capac = capacity
+
+
+class Commodity:
+    def_init_(self, origin, destination, cost, quantity):
+    self.From = origin
+    self.To = destination
+    self.Quant = quantity
+
+
+class Node:
+    def_init_(self):
+    self.InLinks = []
+    self.OutLinks = []
+
+    def addInLinks(self, Node):
+        self.InLinks.append(Node)  # add new InLink to the node
+
+    def addOutLinks(self, Node):
+        self.OutLinks.append(Node)
+
+# Objective function
+model = gp.Model("MCF")
+x = {}
+for m in range(len(Arcs)):
+    for k in range(len(Commodities)):
+        x[k, Arcs[m].From, Arcs[m].To] = model.addVar(obj = Arcs[m].Cost, vtype = "C",
+                                                      name = "x(%d, %d, %d)" % (k, Arcs[m].From, Arcs[m].To))
+model.update()
+# constraints
+ # capacity
+Capacity = {}
+for m in range(len(Arcs)):
+            Capacity[Arcs[m].From, Arcs[m].To] = model.addConstr(gp.quicksum(x[k.Arcs[m].From.Arcs[m].To]
+                                                                         for k in range(len(Commodities))),
+                                                                '<=', Arcs[m].Capac, name = 'Capacity(%d)' % (m))
+# conservation constraint
+Continuity = {}
+for k in range(len(Commodities)):
+    for j in range(len(Nodes)):
+            if j == Commodities[k].From:
+                Continuity[k, j] = model.addConstr(gp.quicksum(x[k, j, p] for p in Nodes[j].OutLinks
+                                                 - gp.quicksum(x[k, p, j] for p in Nodes[j].InLinks)),
+                                        '=', Commodities[k].Quant, name = 'Continuity(%d, %d)' % (k, j))
+
+            elif j == Commodities[k].To:
+                Continuity[k, j] = model.addConstr(gp.quicksum(x[k, j, p] for p in Nodes[j].OutLinks)
+                                             - gp.quicksum(x[k, p, j] for p in Nodes[j].InLinks),
+                                     '=', -Commodities[k].Quant, name = 'Continuity(%d, %d)' % (k, j))
+            else:
+                 Continuity[k, j] = model.addConstr(gp.quicksum(x[k, j, p] for p in Nodes[j].OutLinks)
+                                                 - gp.quicksum( x[k, p, j] for p in Nodes[j].InLinks),
+                                    '=', 0, name = 'Continuity(%d, %d)' % (k, j))
+
+
+model.update()
+model.write("MCF_Model.lp")
+model.optimize()
+
+status = model.status
+if status != gp.GRB.Status.OPTIMAL:
+  if status == gp.GRB.Status.UNBOUNDED:
+            print("The model cannot be solved because it is unbounded")
+  elif status == gp.GRB.Status.INFEASIBLE:
+            print('The model is infeasible; compute IIS')
+            model.computeIIS()
+            print('\n The following constraints cannot be satisfied:')
+            for c in model.getConstrs():
+                if c.IISConstrs():
+                      print('%s' % c.constrName)
+  elif status != gp.GRB.Status.INF_OR_UNBD:
+            print('Optimization was stopped with status %d' % status)
+exit(0)
+
+
+
