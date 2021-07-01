@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/venv/example #8/main2.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/venv/example #8/newcode.py">
           <value>
             <Attribute>

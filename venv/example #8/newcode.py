@@ -11,7 +11,7 @@ class Arc:
 
 
 class Commodity:
-    def __init__(self, origin, destination, cost, quantity):
+    def __init__(self, origin, destination, quantity):
         self.From = origin
         self.To = destination
         self.Quant = quantity
@@ -31,18 +31,27 @@ class Node:
 if __name__ == '__main__':
 # Input excel files with arcs data(sheet 1) and commodities data (sheet2)
 # Generate lista to store 'objects'
+    #Arcs = [(1,2,1,20),(1,3,1,10),(2,3,2,10),(2,4,4,20),(3,4,8,40),(3,5,5,10),(4,5,3,30)]
+    #Nodes = [1,2,3,4,5]
+    #Commodities = [(1,4,15),(1,5,5),(2,5,10),(3,5,5)]
     Arcs = []
     Nodes = []
     Commodities = []
 # Open input file(excel) that is in the current folder
 
+
+
     loc1=("/Users/fer/PycharmProjects/project/Input_lecct.xlsx")
-#loc1 = (r"C:\Users\rithi\pyprojnew\Input_lecct.xls")
+
+#loc1 = (r"C:\Users\rithi\pyprojnew\input_lecct.xls")
 
     wb = load_workbook(loc1, read_only=True)
+    sheet=wb.active
     List_arcs = tuple(wb["Arcs"].iter_rows())
     List_commo = tuple(wb["Commodities"].iter_rows())
 
+    b1=sheet['B2']
+    print(b1.value)
 
 
     # Objective function
@@ -97,6 +106,9 @@ if __name__ == '__main__':
       elif status != gp.GRB.Status.INF_OR_UNBD:
                 print('Optimization was stopped with status %d' % status)
     exit(0)
+
+
+
 
 
 

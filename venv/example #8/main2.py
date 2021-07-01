@@ -16,9 +16,10 @@ weight = []
 graph = []
 leavingnode=[]
 comingnode=[]
+price ={}
+maxcapacity=[]
 comm=[]
 tran=[]
-allCost={}
 demand ={}
 start=[]
 cnode=[]
@@ -26,19 +27,22 @@ nodes=[]
 G = netx.DiGraph()
 var_names = []
 var_values = []
-
+demands={}
+commo=[]
+origin=[]
+destination=[]
 
 #loc1 = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
-loc1=("/Users/fer/PycharmProjects/project/networkflow2d.xls")
+#loc1=("/Users/fer/PycharmProjects/project/networkflow2d.xls")
 loc2= ("/Users/fer/PycharmProjects/project/networkflow2d.xlsx")
 loc3= ('/Users/fer/PycharmProjects/project/export.csv')
 
+loc1 = ("/Users/fer/PycharmProjects/project/Input_lecct copy.xls")
+
 wb = xlrd.open_workbook(loc1)
-vertex=wb.sheet_by_index(0)
-capacities=wb.sheet_by_index(1)
-commodities=wb.sheet_by_index(2)
-cost=wb.sheet_by_index(3)
-inflow=wb.sheet_by_index(4)
+Vertex=wb.sheet_by_index(0)
+Arcs=wb.sheet_by_index(1)
+Commodities=wb.sheet_by_index(2)
 
 ################ adding vertex from excel ######################
 
@@ -60,7 +64,7 @@ def add_vertex(v):
         graph.append(temp)
 
 ################ adding vertex from excel ######################
-def add_edge(v1, v2, e):
+def add_edge(v1, v2,e):
     global graph
     global vertices_no
     global vertices
@@ -124,7 +128,7 @@ def draw_graph():
 
 ################ multicommodity######################
 
-def max_flow(test,cost,demands):
+def max_flow(commodity,origin,destination,cost,demandz):
     global graph
     global vertices_no
     global vertices
@@ -145,7 +149,7 @@ def max_flow(test,cost,demands):
                 listvalueCap.append((graph[i][j]))
     print("This prints out the capacity of the node pair: ", listvalueCap)
 
-    di,capacity = gp.multidict(dict(zip(listkeyPair, listvalueCap)))
+    pair,capacity = gp.multidict(dict(zip(listkeyPair, listvalueCap)))
     print("The dictionary after the merge of the pairs of nodes with the capacities:")
     print (capacity)
 
@@ -153,7 +157,7 @@ def max_flow(test,cost,demands):
     listnodes=[]
     #for a in range(1):
     for i in range(vertices_no):
-                listnodes.append((test,vertices[i]))
+                listnodes.append((commodity,vertices[i]))
     print("lsit of nodes with each commodity:", listnodes)
 
     listactualnodes = []
@@ -162,43 +166,85 @@ def max_flow(test,cost,demands):
     print("lsit of actual nodes:", listactualnodes)
 
 
-    inter_nodes_list = listactualnodes
+    #inter_nodes_list = listactualnodes
 
     # removes the first two nodes from the vertex list because its the source node
-    inter_nodes_list.remove(vertices[0])
-    inter_nodes_list.remove(vertices[1])
+    #inter_nodes_list.remove(vertices[0])
+    #inter_nodes_list.remove(vertices[1])
     # removes the two last nodes from the vertex list because they are the sink nodes
-    inter_nodes_list.remove(vertices[-1])
-    inter_nodes_list.remove(vertices[-2])
-    print("inter", inter_nodes_list)
+    #inter_nodes_list.remove(vertices[-1])
+    #inter_nodes_list.remove(vertices[-2])
+    #print("inter", inter_nodes_list)
 
-    #print("demand",demand)
-    #print("cost",cost)
-    print("demand",demand)
+    print("demand",demandz)
     print("cost",cost)
-    print("test", test)
+    print("commodity", commodity)
 
     # Create optimization model
-    m = gp.Model('netflow')
 
     # Create variables
     # flow = m.addVars(test,di, obj=cost, name="flow")
-    flow = m.addVars(test, di, obj=cost, name="flow")
+     #flow = m.addVars(test, di, obj=cost, name="flow")
     # m.setObjective(flow.prod(cost), GRB.MINIMIZE)
 
-    m.update()
+    #objective function
+    #m = gp.Model('netflow')
 
-     #Arc-capacity constraints
-    for x,y in di:
-      m.addConstr(sum(flow[h, x, y] for h in test) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+    #flow={}
+    #for x, y in di:
+        #for h in test:
+                #flow[h,x,y] = m.addVar(obj=cost, name="flow(%d, %d, %d)" % (h,x,y))
+    #flow = m.addVars(di, test, obj=cost, name="flow")
+
+   # m.update()
+
+     #Arc-capacity constraint
+    #Capacity ={}
+   # for x,y in di:
+      #Capacity[x,y]= m.addConstr(gp.quicksum(flow[x,y] for h in test), '<=', capacity[x, y], name="cap[%s, %s]" % (x, y))
 
      #Flow-conservation constraints
     # they require that, for each commodity and node, the sum of the flow into the node
     # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
-    m.addConstrs(
-        (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demands[h,y]   ==
-          gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
-          for h in test for y in listactualnodes), "node")
+    #m.addConstrs(
+       # (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demands[h,y]   ==
+         # gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
+         # for h in test for y in listactualnodes), "node")
+
+    m = gp.Model('netflow')
+
+    # Create variables
+    # flow = m.addVars(test,di, obj=cost, name="flow")
+    flow = m.addVars(commodity, pair, obj=cost, name="flow")
+    # m.setObjective(flow.prod(cost), GRB.MINIMIZE)
+
+    m.update()
+
+    # Arc-capacity constraints
+    for x, y in pair:
+        m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+
+    # Flow-conservation constraints
+    # they require that, for each commodity and node, the sum of the flow into the node
+    # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
+    #m.addConstrs(
+        #(gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) + demands[h, y] ==
+         #gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
+         #for h in commodity for y in listactualnodes), "node")
+
+    if y == origin:
+        m.addConstr(gp.quicksum(flow[h, y, p] for h in commodity for p in y)
+                                        - gp.quicksum(flow[h, p, y] for h in commodity  for p in x)
+                                        = demandz, 'Continuity(%d, %d)' % (h, y for h in commodity))
+
+    elif y == destination:
+        m.addConstr(gp.quicksum(flow[h, y, p] for h in commodity for p in y)
+                                        - gp.quicksum(flow[h, p, y] for h in commodity for p in x),
+                                        '=', -demandz, name='Continuity(%d, %d)' % (h, y for h in commodity))
+    else:
+        m.addConstr(gp.quicksum(flow[h, y, p]  for h in commodity for p in y)
+                                        - gp.quicksum(flow[h, p, y]  for h in commodity for p in x),
+                                       '=', 0, name='Continuity(%d, %d)' % (h, y for h in commodity))
 
     # Compute optimal solutions
     m.optimize()
@@ -225,92 +271,81 @@ def max_flow(test,cost,demands):
 
 
 #################Driver#########################
-
+#adding the vertex sheet with all the nodes
 p = 1
 while True:
     try:
-        v = vertex.cell_value(p, 0)
+        v = Vertex.cell_value(p, 0)
+        #adds it to list of vertices
         add_vertex(v)
+        #adds it to draw graph
         nodes.append(v)
         print(nodes)
         p = p+1
     except IndexError:
         break
 
+# adding the arcs sheet with i, j,capacity  and then matching them with a cost
 i = 1
 while True:
     try:
 
-        l = capacities.cell_value(i, 0)
-        c = capacities.cell_value(i, 1)
-        cap = capacities.cell_value(i,2)
+        l = Arcs.cell_value(i, 0)
+        leavingnode.append(l)
+        c = Arcs.cell_value(i, 1)
+        comingnode.append(l)
+        cap = Arcs.cell_value(i,3)
+        maxcapacity.append(cap)
         add_edge(l,c,cap)
         i = i+1
     except IndexError:
         break
 
-o=1
-while True:
-    try:
-        c = capacities.cell_value(o, 1)
-        comingnode.append(c)
-        l = capacities.cell_value(o, 0)
-        leavingnode.append(l)
-        o = o+1
-    except IndexError:
-        break
-
-eM=1
-while True:
-    try:
-        m = commodities.cell_value(eM, 0)
-        comm.append(m)
-        eM = eM+1
-    except IndexError:
-        break
-
-
-
-
-
-for commo in comm:
-    s = 1
-    j=3
-    print("Commodity:", commo)
-    for leave in leavingnode:
-        print("leave",leave)
-        cnode = capacities.cell_value(s, 1)
-        print('coming',cnode)
-        allCost[commo,leave,cnode]=cost.cell_value(s,j)
-        print("cost:", allCost[commo,leave,cnode])
-        s = s+1
-    print("this is j:",j)
-
-
-
 z = 1
 while True:
     try:
-        for commo in comm:
-           print("Commodity:", commo)
-           for ver in nodes:
-                   demand[commo,ver]=inflow.cell_value(z,2)
-                   print("inflow:", demand[commo,ver])
-                   z = z+1
+        for leave  in leavingnode:
+           c = Arcs.cell_value(z, 1)
+           price[leave,c]=Arcs.cell_value(z,2)
+           print("cost:", price[leave,c])
+           z = z+1
     except IndexError:
         break
 
 
+# adding the commodities sheet with #, origin, destination and quantity
+i = 1
+while True:
+    try:
+        item= Commodities.cell_value(i,0)
+        commo.append(item)
+        ori = Commodities.cell_value(i, 1)
+        origin.append(ori)
+        dest = Commodities.cell_value(i, 2)
+        destination.append(dest)
+        i = i+1
+    except IndexError:
+        break
+
+a = 1
+while True:
+    try:
+        for it in commo:
+           ori = Commodities.cell_value(a, 1)
+           dest = Commodities.cell_value(a, 2)
+           demands[it,ori,dest]=Commodities.cell_value(a,3)
+           print("Demands:", demands[it,ori,dest])
+           a = a+1
+    except IndexError:
+        break
 
 print_graph()
 print("Internal representation: ", graph)
-draw_graph()
+#draw_graph()
 
 print("END:")
-print("Comm",comm)
-print("allCost",allCost)
-print("Demand",demand)
-max_flow(comm, allCost, demand)
+print("origin:",origin)
+max_flow(commo,origin,destination, price, demands)
 
 read_file = pd.read_csv(loc3)
 fp.save_book_as(file_name=loc1,
