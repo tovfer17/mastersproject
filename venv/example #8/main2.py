@@ -166,20 +166,6 @@ def max_flow(commodity,origin,destination,cost,demandz):
     print("lsit of actual nodes:", listactualnodes)
 
 
-    #inter_nodes_list = listactualnodes
-
-    # removes the first two nodes from the vertex list because its the source node
-    #inter_nodes_list.remove(vertices[0])
-    #inter_nodes_list.remove(vertices[1])
-    # removes the two last nodes from the vertex list because they are the sink nodes
-    #inter_nodes_list.remove(vertices[-1])
-    #inter_nodes_list.remove(vertices[-2])
-    #print("inter", inter_nodes_list)
-
-    print("demand",demandz)
-    print("cost",cost)
-    print("commodity", commodity)
-
     # Create optimization model
 
     # Create variables
@@ -232,20 +218,28 @@ def max_flow(commodity,origin,destination,cost,demandz):
          #gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
          #for h in commodity for y in listactualnodes), "node")
 
-    if y == origin:
-        m.addConstr(gp.quicksum(flow[h, y, p] for h in commodity for p in y)
-                                        - gp.quicksum(flow[h, p, y] for h in commodity  for p in x)
-                                        = demandz, 'Continuity(%d, %d)' % (h, y for h in commodity))
+    for o in origin:
+         for y in listactualnodes:
+           print("origin",o)
+           print("node",y)
 
-    elif y == destination:
-        m.addConstr(gp.quicksum(flow[h, y, p] for h in commodity for p in y)
-                                        - gp.quicksum(flow[h, p, y] for h in commodity for p in x),
-                                        '=', -demandz, name='Continuity(%d, %d)' % (h, y for h in commodity))
-    else:
-        m.addConstr(gp.quicksum(flow[h, y, p]  for h in commodity for p in y)
-                                        - gp.quicksum(flow[h, p, y]  for h in commodity for p in x),
-                                       '=', 0, name='Continuity(%d, %d)' % (h, y for h in commodity))
+         """if y == o:
+             m.addConstrs(
+                    (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) - gp.quicksum(flow[h, y, k] for y,k in pair.select(y, '*'))  ==
+                     demandz[h] for h in commodity for y in listactualnodes), "node")
 
+    #for h in destination:
+        #if y == h:
+                #m.addConstrs(
+                    #(gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) - gp.quicksum(
+                       # flow[h, y, k] for y, k in pair.select(y, '*')) ==
+                     #  -demandz[h] for h in commodity for y in listactualnodes), "node")
+         else:
+                m.addConstrs(
+                    (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) - gp.quicksum(
+                        flow[h, y, k] for y, k in pair.select(y, '*')) ==
+                     0 for h in commodity for y in listactualnodes), "node")
+"""
     # Compute optimal solutions
     m.optimize()
     print (m.display())
@@ -264,9 +258,9 @@ def max_flow(commodity,origin,destination,cost,demandz):
            var_values.append(var.X)
 
     # Write to csv
-    with open('/Users/fer/PycharmProjects/project/export.csv', 'wb') as myfile:
+    """with open('/Users/fer/PycharmProjects/project/export.csv', 'wb') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-        wr.writerows(zip(var_names, var_values))
+        wr.writerows(zip(var_names, var_values))"""
 
 
 
@@ -341,20 +335,24 @@ while True:
 
 print_graph()
 print("Internal representation: ", graph)
-#draw_graph()
+draw_graph()
 
 print("END:")
+print("commo",commo)
 print("origin:",origin)
+print('destination',destination)
+
+
+
 max_flow(commo,origin,destination, price, demands)
+#read_file = pd.read_csv(loc3)
+#fp.save_book_as(file_name=loc1,
+               #dest_file_name=loc2)
 
-read_file = pd.read_csv(loc3)
-fp.save_book_as(file_name=loc1,
-               dest_file_name=loc2)
+#book = load_workbook(loc2)
+#writer = pandas.ExcelWriter(loc2, engine='openpyxl')
+#writer.book = book
 
-book = load_workbook(loc2)
-writer = pandas.ExcelWriter(loc2, engine='openpyxl')
-writer.book = book
-
-writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-read_file.to_excel(writer, "Max Z", header= False,startrow=1)
-writer.save()
+#writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+#read_file.to_excel(writer, "Max Z", header= False,startrow=1)
+#writer.save()
