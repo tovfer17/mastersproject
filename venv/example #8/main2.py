@@ -128,7 +128,7 @@ def draw_graph():
 
 ################ multicommodity######################
 
-def max_flow(commodity,origin,destination,cost,demandz):
+def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz):
     global graph
     global vertices_no
     global vertices
@@ -218,28 +218,26 @@ def max_flow(commodity,origin,destination,cost,demandz):
          #gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
          #for h in commodity for y in listactualnodes), "node")
 
-    for o in origin:
-         for y in listactualnodes:
-           print("origin",o)
-           print("node",y)
+    Continuity = {}
+    for y in range(len(listactualnodes)):
+         for h in range(len(commodity)):
+             if ( y == origin[h]):
+                 Continuity[h, y] = m.addConstr(
+                    gp.quicksum(flow[h, y, x] for x in leavingnode[x]) - gp.quicksum(
+                         flow[h, x, y] for x in comingnode[x]), '=',
+                         demandz[h], name= 'Continuity1(%d, %d)' % (h, y))
+             elif (y == destination[h]):
+                 Continuity[h, y] = m.addConstr(
+                    gp.quicksum(flow[h, y, x] for x in leavingnode[x]) - gp.quicksum(
+                         flow[h, x, y] for x in  comingnode[x]),  '=',
+                        -demandz[h],name= 'Continuity2(%d, %d)' % (h, y))
+             else:
+               Continuity[h, y] = m.addConstr(
+                    gp.quicksum(flow[h, y, x] for x in leavingnode[x]) - gp.quicksum(
+                        flow[h, x, y] for x in  comingnode[x]) ,'=',
+                        0 ,name= 'Continuity3(%d, %d)' % (h, y))
 
-         """if y == o:
-             m.addConstrs(
-                    (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) - gp.quicksum(flow[h, y, k] for y,k in pair.select(y, '*'))  ==
-                     demandz[h] for h in commodity for y in listactualnodes), "node")
 
-    #for h in destination:
-        #if y == h:
-                #m.addConstrs(
-                    #(gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) - gp.quicksum(
-                       # flow[h, y, k] for y, k in pair.select(y, '*')) ==
-                     #  -demandz[h] for h in commodity for y in listactualnodes), "node")
-         else:
-                m.addConstrs(
-                    (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) - gp.quicksum(
-                        flow[h, y, k] for y, k in pair.select(y, '*')) ==
-                     0 for h in commodity for y in listactualnodes), "node")
-"""
     # Compute optimal solutions
     m.optimize()
     print (m.display())
@@ -344,7 +342,7 @@ print('destination',destination)
 
 
 
-max_flow(commo,origin,destination, price, demands)
+max_flow(commo,leavingnode,comingnode, origin,destination, price, demands)
 #read_file = pd.read_csv(loc3)
 #fp.save_book_as(file_name=loc1,
                #dest_file_name=loc2)
