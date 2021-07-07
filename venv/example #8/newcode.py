@@ -1,6 +1,8 @@
 import gurobipy as gp
 from openpyxl import load_workbook
 
+
+
 # Objects
 class Arc:
     def __init__(self, origin, destination, cost, capacity):
@@ -45,14 +47,28 @@ if __name__ == '__main__':
 
 #loc1 = (r"C:\Users\rithi\pyprojnew\input_lecct.xls")
 
-    wb = load_workbook(loc1, read_only=True)
-    sheet=wb.active
+
+    wb = load_workbook(filename=loc1, read_only=True)
+    ws = wb['Arcs']
+
+    for row in ws.rows:
+        for cell in row:
+            print(cell.value)
+
+# Close the workbook after reading
+
+
+    #wb = openpyxl.load_workbook(loc1, read_only=True)
+    #sheet=wb.active
     List_arcs = tuple(wb["Arcs"].iter_rows())
     List_commo = tuple(wb["Commodities"].iter_rows())
 
-    b1=sheet['B2']
-    print(b1.value)
+    print(List_commo)
 
+    #play_data = wb['Arcs']
+    #print(play_data)
+
+    wb.close()
 
     # Objective function
     model = gp.Model("MCF")

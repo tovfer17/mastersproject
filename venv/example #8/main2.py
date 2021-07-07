@@ -32,6 +32,7 @@ commo=[]
 origin=[]
 destination=[]
 
+
 #loc1 = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
 #loc1=("/Users/fer/PycharmProjects/project/networkflow2d.xls")
 loc2= ("/Users/fer/PycharmProjects/project/networkflow2d.xlsx")
@@ -166,6 +167,11 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     print("lsit of actual nodes:", listactualnodes)
 
 
+
+    nodes =leavingnode +comingnode
+    print("list of all incoming and outgoingnodes: ", nodes)
+
+
     # Create optimization model
 
     # Create variables
@@ -218,26 +224,30 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
          #gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
          #for h in commodity for y in listactualnodes), "node")
 
+
     Continuity = {}
-    for y in range(len(listactualnodes)):
-         for h in range(len(commodity)):
-             if ( y == origin[h]):
-                 Continuity[h, y] = m.addConstr(
-                    gp.quicksum(flow[h, y, x] for x in leavingnode[x]) - gp.quicksum(
-                         flow[h, x, y] for x in comingnode[x]), '=',
-                         demandz[h], name= 'Continuity1(%d, %d)' % (h, y))
-             elif (y == destination[h]):
-                 Continuity[h, y] = m.addConstr(
-                    gp.quicksum(flow[h, y, x] for x in leavingnode[x]) - gp.quicksum(
-                         flow[h, x, y] for x in  comingnode[x]),  '=',
-                        -demandz[h],name= 'Continuity2(%d, %d)' % (h, y))
-             else:
-               Continuity[h, y] = m.addConstr(
-                    gp.quicksum(flow[h, y, x] for x in leavingnode[x]) - gp.quicksum(
-                        flow[h, x, y] for x in  comingnode[x]) ,'=',
-                        0 ,name= 'Continuity3(%d, %d)' % (h, y))
+    for h in commodity:
+        for y in nodes:
+          for a in range(len(commodity)):
+            if y == origin[a]:
+                print("test 1")
+                Continuity[h, y] = m.addConstr(
+                    ((gp.quicksum(flow[h, y, x] for h,y,k in commingnode.select(h,y,'*')) - gp.quicksum(
+                        flow[h, x, y] for h,x,y in leavingnode.select(h,'*',y))
+                                 for h in commodity for y in nodes)== demandz[a]), name = 'Continuity(%s, %s)' % (h, y))
 
-
+            elif y == destination[a]:
+                print("test 2")
+                Continuity[h, y] = m.addConstr(
+                    ((gp.quicksum(flow[h, y, x] for h, y, k in commingnode.select(h, y, '*')) - gp.quicksum(
+                        flow[h, x, y] for h, x, y in leavingnode.select(h, '*', y))
+                                for h in commodity for y in nodes) == -demandz[a]), name= 'Continuity(%s, %s)' % (h, y))
+            else:
+                print("test 3")
+                Continuity[h, y] = m.addConstr(
+                    ((gp.quicksum(flow[h, y, x] for h, y, k in commingnode.select(h, y, '*')) - gp.quicksum(
+                        flow[h, x, y] for h, x, y in leavingnode.select(h, '*', y))
+                     for h in commodity for y in nodes) == 0), name= 'Continuity(%s, %s)' % (h, y))
     # Compute optimal solutions
     m.optimize()
     print (m.display())
@@ -285,7 +295,7 @@ while True:
         l = Arcs.cell_value(i, 0)
         leavingnode.append(l)
         c = Arcs.cell_value(i, 1)
-        comingnode.append(l)
+        comingnode.append(c)
         cap = Arcs.cell_value(i,3)
         maxcapacity.append(cap)
         add_edge(l,c,cap)
@@ -333,14 +343,15 @@ while True:
 
 print_graph()
 print("Internal representation: ", graph)
-draw_graph()
+#draw_graph()
 
 print("END:")
 print("commo",commo)
 print("origin:",origin)
 print('destination',destination)
 
-
+print("leaving", leavingnode)
+print('coming', comingnode)
 
 max_flow(commo,leavingnode,comingnode, origin,destination, price, demands)
 #read_file = pd.read_csv(loc3)

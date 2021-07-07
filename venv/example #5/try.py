@@ -16,7 +16,6 @@ G.add_node(3,inflow ="5000")
 G.add_node(4,inflow ="5400")
 G.add_node(5,inflow ="7700")
 
-G.add_edges_from([(0, 1), (1, 3),(3,5),(4,5),(4,3),(3,2),(2,4),(4,1),(0,2)])
 
 
 print("Total number of nodes: ", int(G.number_of_nodes()))
