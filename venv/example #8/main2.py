@@ -31,6 +31,7 @@ demands={}
 commo=[]
 origin=[]
 destination=[]
+dem=[]
 
 
 #loc1 = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
@@ -168,46 +169,18 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
 
 
 
-    nodes =leavingnode +comingnode
+    nodes =leavingnode +commingnode
     print("list of all incoming and outgoingnodes: ", nodes)
 
 
     # Create optimization model
 
-    # Create variables
-    # flow = m.addVars(test,di, obj=cost, name="flow")
-     #flow = m.addVars(test, di, obj=cost, name="flow")
-    # m.setObjective(flow.prod(cost), GRB.MINIMIZE)
-
-    #objective function
-    #m = gp.Model('netflow')
-
-    #flow={}
-    #for x, y in di:
-        #for h in test:
-                #flow[h,x,y] = m.addVar(obj=cost, name="flow(%d, %d, %d)" % (h,x,y))
-    #flow = m.addVars(di, test, obj=cost, name="flow")
-
-   # m.update()
-
-     #Arc-capacity constraint
-    #Capacity ={}
-   # for x,y in di:
-      #Capacity[x,y]= m.addConstr(gp.quicksum(flow[x,y] for h in test), '<=', capacity[x, y], name="cap[%s, %s]" % (x, y))
-
-     #Flow-conservation constraints
-    # they require that, for each commodity and node, the sum of the flow into the node
-    # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
-    #m.addConstrs(
-       # (gp.quicksum(flow[h,x,y] for x, y in di.select('*', y)) + demands[h,y]   ==
-         # gp.quicksum(flow[h, y, k] for y, k in di.select(y, '*'))
-         # for h in test for y in listactualnodes), "node")
 
     m = gp.Model('netflow')
 
     # Create variables
     # flow = m.addVars(test,di, obj=cost, name="flow")
-    flow = m.addVars(commodity, pair, obj=cost, name="flow")
+    flow = m.addVars(commodity, pair, obj=cost,vtype = "C", name="flow")
     # m.setObjective(flow.prod(cost), GRB.MINIMIZE)
 
     m.update()
@@ -216,38 +189,30 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     for x, y in pair:
         m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
 
-    # Flow-conservation constraints
-    # they require that, for each commodity and node, the sum of the flow into the node
-    # plus the quantity of external inflow at that node must be equal to the sum of the flow out of the node:
-    #m.addConstrs(
-        #(gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) + demands[h, y] ==
-         #gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
-         #for h in commodity for y in listactualnodes), "node")
 
 
-    Continuity = {}
     for h in commodity:
         for y in nodes:
           for a in range(len(commodity)):
             if y == origin[a]:
                 print("test 1")
-                Continuity[h, y] = m.addConstr(
-                    ((gp.quicksum(flow[h, y, x] for h,y,k in commingnode.select(h,y,'*')) - gp.quicksum(
-                        flow[h, x, y] for h,x,y in leavingnode.select(h,'*',y))
-                                 for h in commodity for y in nodes)== demandz[a]), name = 'Continuity(%s, %s)' % (h, y))
+                m.addConstrs(
+                    (gp.quicksum(flow[h, y, x] for x in leavingnode) - gp.quicksum(
+                        flow[h, x, y] for x in comingnode) == abs(demandz[h,y])
+                                 for h in commodity for y in nodes), name = 'Continuity(%s, %s)' % (h, y))
 
             elif y == destination[a]:
                 print("test 2")
-                Continuity[h, y] = m.addConstr(
-                    ((gp.quicksum(flow[h, y, x] for h, y, k in commingnode.select(h, y, '*')) - gp.quicksum(
-                        flow[h, x, y] for h, x, y in leavingnode.select(h, '*', y))
-                                for h in commodity for y in nodes) == -demandz[a]), name= 'Continuity(%s, %s)' % (h, y))
+                m.addConstrs(
+                    (gp.quicksum(flow[h, y, x] for  x in leavingnode) - gp.quicksum(
+                        flow[h, x, y] for x in commingnode) == demandz[h,y]
+                                for h in commodity for y in nodes) , name= 'Continuity(%s, %s)' % (h, y))
             else:
                 print("test 3")
-                Continuity[h, y] = m.addConstr(
-                    ((gp.quicksum(flow[h, y, x] for h, y, k in commingnode.select(h, y, '*')) - gp.quicksum(
-                        flow[h, x, y] for h, x, y in leavingnode.select(h, '*', y))
-                     for h in commodity for y in nodes) == 0), name= 'Continuity(%s, %s)' % (h, y))
+                m.addConstrs(
+                    (gp.quicksum(flow[h, y, x] for  x in leavingnode) - gp.quicksum(
+                        flow[h, x, y] for  x in commingnode)  == 0
+                     for h in commodity for y in nodes), name= 'Continuity(%s, %s)' % (h, y))
     # Compute optimal solutions
     m.optimize()
     print (m.display())
@@ -335,8 +300,11 @@ while True:
         for it in commo:
            ori = Commodities.cell_value(a, 1)
            dest = Commodities.cell_value(a, 2)
-           demands[it,ori,dest]=Commodities.cell_value(a,3)
-           print("Demands:", demands[it,ori,dest])
+           demands =Commodities.cell_value(a,3)
+           dem.append(demands)
+           #demands[it,ori,dest]=Commodities.cell_value(a,3)
+           #print("Demands:", demands[it,ori,dest])
+           print("Demands:", dem)
            a = a+1
     except IndexError:
         break
@@ -353,7 +321,7 @@ print('destination',destination)
 print("leaving", leavingnode)
 print('coming', comingnode)
 
-max_flow(commo,leavingnode,comingnode, origin,destination, price, demands)
+max_flow(commo,leavingnode,comingnode, origin,destination, price, dem)
 #read_file = pd.read_csv(loc3)
 #fp.save_book_as(file_name=loc1,
                #dest_file_name=loc2)

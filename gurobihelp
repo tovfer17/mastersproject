@@ -1,0 +1,100 @@
+import gurobipy as gp
+def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz):
+    global graph
+    global vertices_no
+    global vertices
+    global weight
+
+
+    listkeyPair=[]
+    for i in range(vertices_no):
+        for j in range(vertices_no):
+           if graph[i][j] != 0:
+                listkeyPair.append((vertices[i], vertices[j]))
+    print("This prints out the nodes in the pair: ",listkeyPair)
+
+    listvalueCap=[]
+    for i in range(vertices_no):
+        for j in range(vertices_no):
+            if  graph[i][j] != 0:
+                listvalueCap.append((graph[i][j]))
+    print("This prints out the capacity of the node pair: ", listvalueCap)
+
+    pair,capacity = gp.multidict(dict(zip(listkeyPair, listvalueCap)))
+    print("The dictionary after the merge of the pairs of nodes with the capacities:")
+    print (capacity)
+
+
+    listnodes=[]
+    #for a in range(1):
+    for i in range(vertices_no):
+                listnodes.append((commodity,vertices[i]))
+    print("lsit of nodes with each commodity:", listnodes)
+
+    listactualnodes = []
+    for i in range(vertices_no):
+            listactualnodes.append((vertices[i]))
+    print("lsit of actual nodes:", listactualnodes)
+
+
+
+    nodes =leavingnode +commingnode
+    print("list of all incoming and outgoingnodes: ", nodes)
+
+
+    # Create optimization model
+
+
+    m = gp.Model('netflow')
+
+    # Create variables
+    # flow = m.addVars(test,di, obj=cost, name="flow")
+    flow = m.addVars(commodity, pair, obj=cost,vtype = "C", name="flow")
+    # m.setObjective(flow.prod(cost), GRB.MINIMIZE)
+
+    m.update()
+
+    # Arc-capacity constraints
+    for x, y in pair:
+        m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+
+
+    Continuity = {}
+    for h in commodity:
+        for y in nodes:
+          for a in range(len(commodity)):
+            if y == origin[a]:
+                print("test 1")
+                m.addConstrs(
+                    (gp.quicksum(flow[h, y, x] for x in commingnode) - gp.quicksum(
+                        flow[h, x, y] for x in leavingnode) == abs(demandz[h,y])
+                                 for h in commodity for y in nodes), name = 'Continuity(%s, %s)' % (h, y))
+
+            elif y == destination[a]:
+                print("test 2")
+                m.addConstrs(
+                    (gp.quicksum(flow[h, y, x] for  x in commingnode) - gp.quicksum(
+                        flow[h, x, y] for x in leavingnode) == demandz[h,y]
+                                for h in commodity for y in nodes) , name= 'Continuity(%s, %s)' % (h, y))
+            else:
+                print("test 3")
+                m.addConstrs(
+                    (gp.quicksum(flow[h, y, x] for  x in commingnode) - gp.quicksum(
+                        flow[h, x, y] for  x in leavingnode)  == 0
+                     for h in commodity for y in nodes), name= 'Continuity(%s, %s)' % (h, y))
+    # Compute optimal solutions
+    m.optimize()
+    print (m.display())
+
+    print("if model fesible it will print a 2 .", m.status)
+
+    # Print solution
+
+    # print solution: optimal value and optimal point
+    print('Obj: %g' % m.objVal)
+     #print(f"optimal value = {model.objVal:.2f}")
+    for var in m.getVars():
+       #print('%s %g' % (v.varName, v.x))
+       if var.X > 0:
+           var_names.append(str(var.varName))
+           var_values.append(var.X)
