@@ -188,31 +188,37 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     # Arc-capacity constraints
     for x, y in pair:
         m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
-
-
+    """
+    m.addConstrs(
+        (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) + demandz[h,o,d] ==
+         gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
+         for h in commodity for o in origin for d in destination), "node")
+    """
 
     for h in commodity:
-        for y in nodes:
-          for a in range(len(commodity)):
+     for y in nodes:
+        for a in range(len(commodity)):
             if y == origin[a]:
                 print("test 1")
                 m.addConstrs(
-                    (gp.quicksum(flow[h, y, x] for x in leavingnode) - gp.quicksum(
-                        flow[h, x, y] for x in comingnode) == abs(demandz[h,y])
-                                 for h in commodity for y in nodes), name = 'Continuity(%s, %s)' % (h, y))
+                    ((gp.quicksum(flow[h,x,y] for x, y in pair.select('*', y)) -
+                      gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))) == abs(demandz[h,o,d])
+                     for h in commodity for o in origin for d in destination ), name = 'Continuity(%s, %s)' % (h, y))
 
             elif y == destination[a]:
                 print("test 2")
                 m.addConstrs(
-                    (gp.quicksum(flow[h, y, x] for  x in leavingnode) - gp.quicksum(
-                        flow[h, x, y] for x in commingnode) == demandz[h,y]
-                                for h in commodity for y in nodes) , name= 'Continuity(%s, %s)' % (h, y))
+                    ((gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) -
+                     gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))) == demandz[h, o, d]
+                     for h in commodity for o in origin for d in destination), name='Continuity(%s, %s)' % (h, y))
             else:
                 print("test 3")
                 m.addConstrs(
-                    (gp.quicksum(flow[h, y, x] for  x in leavingnode) - gp.quicksum(
-                        flow[h, x, y] for  x in commingnode)  == 0
-                     for h in commodity for y in nodes), name= 'Continuity(%s, %s)' % (h, y))
+                    ((gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) -
+                     gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))) == 0
+                     for h in commodity ), name='Continuity(%s, %s)' % (h, y))
+
+
     # Compute optimal solutions
     m.optimize()
     print (m.display())
@@ -280,7 +286,7 @@ while True:
         break
 
 
-# adding the commodities sheet with #, origin, destination and quantity
+# adding the commodities sheet with #, origin, destination and matching it with a  quantity
 i = 1
 while True:
     try:
@@ -300,11 +306,11 @@ while True:
         for it in commo:
            ori = Commodities.cell_value(a, 1)
            dest = Commodities.cell_value(a, 2)
-           demands =Commodities.cell_value(a,3)
-           dem.append(demands)
-           #demands[it,ori,dest]=Commodities.cell_value(a,3)
-           #print("Demands:", demands[it,ori,dest])
-           print("Demands:", dem)
+           #demands =Commodities.cell_value(a,3)
+           #dem.append(demands)
+           demands[it,ori,dest]=Commodities.cell_value(a,3)
+           print("Demands:", demands[it,ori,dest])
+           #print("Demands:", dem)
            a = a+1
     except IndexError:
         break
@@ -321,7 +327,7 @@ print('destination',destination)
 print("leaving", leavingnode)
 print('coming', comingnode)
 
-max_flow(commo,leavingnode,comingnode, origin,destination, price, dem)
+max_flow(commo,leavingnode,comingnode, origin,destination, price, demands)
 #read_file = pd.read_csv(loc3)
 #fp.save_book_as(file_name=loc1,
                #dest_file_name=loc2)

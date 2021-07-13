@@ -1,4 +1,124 @@
+# Add a vertex to the set of vertices and the graph
+import networkx as netx  # nice (di-)graph Python package
+import matplotlib.pyplot as plt
 import gurobipy as gp
+import xlrd
+
+vertices = []
+vertices_no = 0
+weight = []
+graph = []
+leavingnode=[]
+comingnode=[]
+price ={}
+maxcapacity=[]
+comm=[]
+tran=[]
+demand ={}
+start=[]
+cnode=[]
+nodes=[]
+G = netx.DiGraph()
+var_names = []
+var_values = []
+demands={}
+commo=[]
+origin=[]
+destination=[]
+dem=[]
+
+
+loc1 = ("/Users/fer/PycharmProjects/project/Input_lecct copy.xls")
+
+wb = xlrd.open_workbook(loc1)
+Vertex=wb.sheet_by_index(0)
+Arcs=wb.sheet_by_index(1)
+Commodities=wb.sheet_by_index(2)
+
+################ adding vertex from excel ######################
+
+def add_vertex(v):
+    global graph
+    global vertices_no
+    global vertices
+    if v in vertices:
+        print("Vertex ", v, " already exists")
+    else:
+        vertices_no = vertices_no + 1
+        vertices.append(v)
+        if vertices_no > 1:
+            for vertex in graph:
+                vertex.append(0)
+        temp = []
+        for i in range(vertices_no):
+            temp.append(0)
+        graph.append(temp)
+
+################ adding vertex from excel ######################
+def add_edge(v1, v2,e):
+    global graph
+    global vertices_no
+    global vertices
+    # Check if vertex v1 is a valid vertex
+    if v1 not in vertices:
+        print("Vertex ", v1, " does not exist.")
+    # Check if vertex v1 is a valid vertex
+    elif v2 not in vertices:
+        print("Vertex ", v2, " does not exist.")
+    # Since this code is not restricted to a directed or
+    # an undirected graph, an edge between v1 v2 does not
+    # imply that an edge exists between v2 and v1
+    else:
+        index1 = vertices.index(v1)
+        index2 = vertices.index(v2)
+        graph[index1][index2] = e
+
+################ print the pair of nodes and edgeweight ######################
+def print_graph():
+    global graph
+    global vertices_no
+    for i in range(vertices_no):
+        for j in range(vertices_no):
+            if graph[i][j] != 0:
+                print(vertices[i], " -> ", vertices[j], \
+                      " edge weight: ", graph[i][j])
+                #print vertices
+
+def draw_graph():
+    global graph
+    global vertices_no
+    global vertices
+    global weight
+
+    for i in range(vertices_no):
+        for j in range(vertices_no):
+            if graph[i][j] != 0:
+                weight=(graph[i][j])
+                G.add_edge(vertices[i], vertices[j], weight=weight)
+
+
+    epos = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] > 0]
+
+    pos = netx.spring_layout(G, k=150, seed=200)  # positions for all nodes - seed for reproducibility
+    # nodes
+    netx.draw_networkx_nodes(G, pos)
+    # edges
+    labels = netx.get_edge_attributes(G, 'weight')
+    netx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+    netx.draw_networkx_edges(G, pos, edgelist=epos, width=10,edge_color="orange")
+    # labels
+    netx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
+
+    ax = plt.gca()
+    ax.margins(0.08)
+    plt.axis("off")
+    #plt.tight_layout()
+
+    plt.show()
+    #plt.savefig("graphp.png")
+
+################ multicommodity######################
+
 def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz):
     global graph
     global vertices_no
@@ -26,7 +146,6 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
 
 
     listnodes=[]
-    #for a in range(1):
     for i in range(vertices_no):
                 listnodes.append((commodity,vertices[i]))
     print("lsit of nodes with each commodity:", listnodes)
@@ -57,31 +176,37 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     # Arc-capacity constraints
     for x, y in pair:
         m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+    """
+    m.addConstrs(
+        (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) + demandz[h,o,d] ==
+         gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
+         for h in commodity for o in origin for d in destination), "node")
+    """
 
-
-    Continuity = {}
     for h in commodity:
         for y in nodes:
           for a in range(len(commodity)):
             if y == origin[a]:
                 print("test 1")
                 m.addConstrs(
-                    (gp.quicksum(flow[h, y, x] for x in commingnode) - gp.quicksum(
-                        flow[h, x, y] for x in leavingnode) == abs(demandz[h,y])
-                                 for h in commodity for y in nodes), name = 'Continuity(%s, %s)' % (h, y))
+                    ((gp.quicksum(flow[h, y, x] for x in leavingnode ) - gp.quicksum(
+                        flow[h, x, y] for x in comingnode )) == abs(demandz[h,o,d])
+                     for h in commodity for o in origin for d in destination ), name = 'Continuity(%s, %s)' % (h, y))
 
             elif y == destination[a]:
                 print("test 2")
                 m.addConstrs(
-                    (gp.quicksum(flow[h, y, x] for  x in commingnode) - gp.quicksum(
-                        flow[h, x, y] for x in leavingnode) == demandz[h,y]
-                                for h in commodity for y in nodes) , name= 'Continuity(%s, %s)' % (h, y))
+                    ((gp.quicksum(flow[h, y, x] for  x in leavingnode ) - gp.quicksum(
+                        flow[h, x, y] for x in commingnode )) == demandz[h,o,d]
+                     for h in commodity for o in origin for d in destination) , name= 'Continuity(%s, %s)' % (h, y))
             else:
                 print("test 3")
                 m.addConstrs(
-                    (gp.quicksum(flow[h, y, x] for  x in commingnode) - gp.quicksum(
-                        flow[h, x, y] for  x in leavingnode)  == 0
-                     for h in commodity for y in nodes), name= 'Continuity(%s, %s)' % (h, y))
+                    ((gp.quicksum(flow[h, y, x] for  x in leavingnode ) - gp.quicksum(
+                        flow[h, x, y] for  x in commingnode ) ) == 0
+                 ), name= 'Continuity(%s, %s)' % (h, y))
+
+
     # Compute optimal solutions
     m.optimize()
     print (m.display())
@@ -98,3 +223,87 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
        if var.X > 0:
            var_names.append(str(var.varName))
            var_values.append(var.X)
+
+#################Driver#########################
+#adding the vertex sheet with all the nodes
+p = 1
+while True:
+    try:
+        v = Vertex.cell_value(p, 0)
+        #adds it to list of vertices
+        add_vertex(v)
+        #adds it to draw graph
+        nodes.append(v)
+        print(nodes)
+        p = p+1
+    except IndexError:
+        break
+
+# adding the arcs sheet with i, j,capacity  and then matching them with a cost
+i = 1
+while True:
+    try:
+
+        l = Arcs.cell_value(i, 0)
+        leavingnode.append(l)
+        c = Arcs.cell_value(i, 1)
+        comingnode.append(c)
+        cap = Arcs.cell_value(i,3)
+        maxcapacity.append(cap)
+        add_edge(l,c,cap)
+        i = i+1
+    except IndexError:
+        break
+
+z = 1
+while True:
+    try:
+        for leave  in leavingnode:
+           c = Arcs.cell_value(z, 1)
+           price[leave,c]=Arcs.cell_value(z,2)
+           print("cost:", price[leave,c])
+           z = z+1
+    except IndexError:
+        break
+
+
+# adding the commodities sheet with #, origin, destination and quantity
+i = 1
+while True:
+    try:
+        item= Commodities.cell_value(i,0)
+        commo.append(item)
+        ori = Commodities.cell_value(i, 1)
+        origin.append(ori)
+        dest = Commodities.cell_value(i, 2)
+        destination.append(dest)
+        i = i+1
+    except IndexError:
+        break
+
+a = 1
+while True:
+    try:
+        for it in commo:
+           ori = Commodities.cell_value(a, 1)
+           dest = Commodities.cell_value(a, 2)
+           dem.append(demands)
+           demands[it,ori,dest]=Commodities.cell_value(a,3)
+           print("Demands:", demands[it,ori,dest])
+           a = a+1
+    except IndexError:
+        break
+
+print_graph()
+print("Internal representation: ", graph)
+#draw_graph()
+
+print("END:")
+print("commo",commo)
+print("origin:",origin)
+print('destination',destination)
+
+print("leaving", leavingnode)
+print('coming', comingnode)
+
+max_flow(commo,leavingnode,comingnode, origin,destination, price, demands)

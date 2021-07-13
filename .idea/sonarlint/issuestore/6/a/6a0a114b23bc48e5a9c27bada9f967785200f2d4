@@ -1,5 +1,5 @@
 
-{python:S117"XRename this parameter "maxNutrition" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ø™èûÿÿÿÿ8“ö³œˆ/
-wpython:S1542"SRename function "printSolution" to match the regular expression ^[a-z_][a-z0-9_]*$.(®ÑÓÿÿÿÿÿ8“ö³œˆ/
 ~python:S117"[Rename this parameter "nutritionValues" to match the regular expression ^[_a-z][a-z0-9_]*$.(åÈãÅıÿÿÿÿ8“ö³œˆ/
+wpython:S1542"SRename function "printSolution" to match the regular expression ^[a-z_][a-z0-9_]*$.(®ÑÓÿÿÿÿÿ8“ö³œˆ/
+{python:S117"XRename this parameter "maxNutrition" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ø™èûÿÿÿÿ8“ö³œˆ/
 {python:S117"XRename this parameter "minNutrition" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ø™èûÿÿÿÿ8“ö³œˆ/
