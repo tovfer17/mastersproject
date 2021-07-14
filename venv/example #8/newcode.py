@@ -90,8 +90,8 @@ if __name__ == '__main__':
     for k in range(len(Commodities)):
         for j in range(len(Nodes)):
                 if j == Commodities[k].From:
-                    Continuity[k, j] = model.addConstr(gp.quicksum(x[k, j, p] for p in Nodes[j].OutLinks
-                                                     - gp.quicksum(x[k, p, j] for p in Nodes[j].InLinks)),
+                    Continuity[k, j] = model.addConstr(gp.quicksum(x[k, j, p] for p in Nodes[j].OutLinks)
+                                                     - gp.quicksum(x[k, p, j] for p in Nodes[j].InLinks),
                                             '=', Commodities[k].Quant, name = 'Continuity(%d, %d)' % (k, j))
 
                 elif j == Commodities[k].To:
