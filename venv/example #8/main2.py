@@ -209,23 +209,23 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
                 print ("destination", destination[a])
                 if y == origin[a]:
                     print("test 1")
-                    m.addConstrs(
-                        (gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
-                          gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) == (abs(demandz[h, o, d])
-                         for h in commodity for o in origin for d in destination)), "node[%s, %s]" % (h, y))
+                    m.addConstr(
+                        gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
+                          gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)), '=', (abs(demandz[h, o, d])
+                         for h in commodity for o in origin for d in destination ), name = "node[%s, %s]" % (h, y))
 
 
                 elif y == destination[a]:
                     print("test 2")
-                    m.addConstrs(
-                        (gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
-                         gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) == ( demandz[h, o, d]
-                         for h in commodity for o in origin for d in destination)), "node[%s, %s]" % (h, y))
+                    m.addConstr(
+                         gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
+                         gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)),'=', (demandz[h, o, d]
+                         for h in commodity for o in origin for d in destination), name= "node[%s, %s]" % (h, y))
                 else:
                     print("test 3")
-                    m.addConstrs(
-                        (gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
-                         gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y))== 0), "node[%s, %s]" % (h, y))
+                    m.addConstr(
+                        gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
+                        gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)), '=', 0, name= "node[%s, %s]" % (h, y))
 
 
     # Compute optimal solutions

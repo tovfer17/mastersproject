@@ -1,4 +1,4 @@
 
-lpython:S5797f"HReplace this expression; used as a condition it will always be constant.(¿ºõùÿÿÿÿ8ç´×€ˆ/
-=python:S125Y"Remove this commented out code.(ùÒƒå8ç´×€ˆ/
 mpython:S1192"IDefine a constant instead of duplicating this literal 'New York' 8 times.(¢È¶§şÿÿÿÿ8ç´×€ˆ/
+=python:S125Y"Remove this commented out code.(ùÒƒå8ç´×€ˆ/
+lpython:S5797f"HReplace this expression; used as a condition it will always be constant.(¿ºõùÿÿÿÿ8ç´×€ˆ/

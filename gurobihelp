@@ -1,5 +1,5 @@
-# Add a vertex to the set of vertices and the graph
-import networkx as netx  # nice (di-)graph Python package
+
+import networkx as netx
 import matplotlib.pyplot as plt
 import gurobipy as gp
 import xlrd
@@ -176,14 +176,8 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     # Arc-capacity constraints
     for x, y in pair:
         m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
-    """
-    m.addConstrs(
-        (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) + demandz[h,o,d] ==
-         gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
-         for h in commodity for o in origin for d in destination), "node")
-    """
 
-    Continuity = {}
+
     for h in commodity:
         for x, y in pair:
             print("x", x)
@@ -193,32 +187,28 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
                 print ("destination", destination[a])
                 if y == origin[a]:
                     print("test 1")
-                    Continuity[h, y] = m.addConstr(
-                        (gp.quicksum(flow[h, y, x] for y, x in pair.select(y, '*')) -
-                         gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y))), '=', (abs(demandz[h, o, d])
-                                                                                            for h in commodity for o in
-                                                                                            origin for d in
-                                                                                            destination),
-                        name='Continuity(%s, %s)' % (h, y))
+                    m.addConstr(
+                        gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
+                        gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)), '=', (abs(demandz[h, o, d])
+                                                                                          for h in commodity for o in
+                                                                                          origin for d in destination),
+                        name="node[%s, %s]" % (h, y))
 
 
                 elif y == destination[a]:
-                    print("fdfn", destination[a])
                     print("test 2")
-                    Continuity[h, y] = m.addConstr(
-                        (gp.quicksum(flow[h, y, x] for y, x in pair.select(y, '*')) -
-                         gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y))), '=', (demandz[h, o, d]
-                                                                                            for h in commodity for o in
-                                                                                            origin for d in
-                                                                                            destination),
-                        name='Continuity(%s, %s)' % (h, y))
+                    m.addConstr(
+                        gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
+                        gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)), '=', (demandz[h, o, d]
+                                                                                          for h in commodity for o in
+                                                                                          origin for d in destination),
+                        name="node[%s, %s]" % (h, y))
                 else:
                     print("test 3")
-                    Continuity[h, y] = m.addConstr(
-                        (gp.quicksum(flow[h, y, x] for y, x in pair.select(y, '*')) -
-                         gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y))), '=', 0,
-                        name='Continuity(%s, %s)' % (h, y))
-
+                    m.addConstr(
+                        gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
+                        gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)), '=', 0,
+                        name="node[%s, %s]" % (h, y))
     # Compute optimal solutions
     m.optimize()
     print (m.display())
