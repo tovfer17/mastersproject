@@ -201,6 +201,8 @@ def max_flow(test,cost,demands):
           for h in test for y in listactualnodes), "node")
 
     # Compute optimal solutions
+    m.update()
+    m.write("MCF_Model.mps")
     m.optimize()
     print (m.display())
 

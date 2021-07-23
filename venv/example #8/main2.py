@@ -172,6 +172,8 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     nodes =leavingnode +commingnode
     print("list of all incoming and outgoingnodes: ", nodes)
 
+    print("coming nodes", commingnode)
+    print("leaving nodes",leavingnode)
 
     # Create optimization model
 
@@ -181,7 +183,7 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     # Create variables
     # flow = m.addVars(test,di, obj=cost, name="flow")
     flow = m.addVars(commodity, pair, obj=cost,vtype = "C", name="flow")
-    # m.setObjective(flow.prod(cost), GRB.MINIMIZE)
+    #m.setObjective(flow.prod(cost), gp.MINIMIZE)
 
     m.update()
 
@@ -189,38 +191,38 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     for x, y in pair:
         m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
 
-
-    # Flow-conservation constraints
-    for h in commodity:
-        for x, y in pair:
-            print("x", x)
-            print("y", y)
-            for a in range(len(commodity)):
-                print("d",demandz[a])
+        # Flow-conservation constraints
+    for a in range(len(commodity)):
+            print("a", commodity[a])
+            for y in range(len(leavingnode)):
+                print("d", demandz[a])
                 print ("originnn", origin[a])
                 print ("destination", destination[a])
-                if y == origin[a]:
+                if leavingnode[y] == origin[a]:
                     print("test 1")
                     m.addConstrs(
-                        (gp.quicksum(flow[h, j, k] for j,k in pair.select(j,'*')) -
-                        gp.quicksum(flow[h, i, j] for i, j in pair.select('*', j)) == demandz[a]
-                        for h in commodity for j in commingnode ), "node[%s, %s]" % (a, y))
+                        (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
+                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == demandz[a]
+                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
 
 
-                elif y == destination[a]:
+                elif leavingnode[y] == destination[a]:
                     print("test 2")
                     m.addConstrs(
-                        (gp.quicksum(flow[h, j, k] for j, k in pair.select(j, '*')) -
-                        gp.quicksum(flow[h, i, j] for i, j in pair.select('*', j)) == demandz[a]
-                        for h in commodity for j in commingnode ), "node[%s, %s]"% (a, y))
+                        (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
+                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == -(demandz[a])
+                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
                 else:
                     print("test 3")
                     m.addConstrs(
-                        (gp.quicksum(flow[h, j, k] for j, k in pair.select(j, '*')) -
-                         gp.quicksum(flow[h, i, j] for i, j in pair.select('*', j)) == 0
-                        for h in commodity for j in commingnode), "node[%s, %s]" % (a, y))
-
+                        (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
+                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == 0
+                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
+                print("done")
     # Compute optimal solutions
+    m.update()
+    m.write("whynot.lp")
+    m.write("whynot.mps")
     m.optimize()
     print (m.display())
 
@@ -278,7 +280,7 @@ while True:
 
 
 
-# adding the commodities sheet with #, origin, destination and matching it with a  quantity
+# adding the commodities sheet with #, origin, destination
 i = 1
 while True:
     try:
