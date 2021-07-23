@@ -188,45 +188,37 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     # Arc-capacity constraints
     for x, y in pair:
         m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
-    """
-    m.addConstrs(
-        (gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)) + demandz[h,o,d] ==
-         gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*'))
-         for h in commodity for o in origin for d in destination), "node")
-    """
-
-   # for a in range(len(commodity)):
-       # print ("originnn",  origin[a])
-       # print ("destination", destination[a])
 
 
+    # Flow-conservation constraints
     for h in commodity:
         for x, y in pair:
-            print("x",x)
+            print("x", x)
             print("y", y)
             for a in range(len(commodity)):
+                print("d",demandz[a])
                 print ("originnn", origin[a])
                 print ("destination", destination[a])
                 if y == origin[a]:
                     print("test 1")
-                    m.addConstr(
-                        gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
-                          gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)), '=', (abs(demandz[h, o, d])
-                         for h in commodity for o in origin for d in destination ), name = "node[%s, %s]" % (h, y))
+                    m.addConstrs(
+                        (gp.quicksum(flow[h, j, k] for j,k in pair.select(j,'*')) -
+                        gp.quicksum(flow[h, i, j] for i, j in pair.select('*', j)) == demandz[a]
+                        for h in commodity for j in commingnode ), "node[%s, %s]" % (a, y))
 
 
                 elif y == destination[a]:
                     print("test 2")
-                    m.addConstr(
-                         gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
-                         gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)),'=', (demandz[h, o, d]
-                         for h in commodity for o in origin for d in destination), name= "node[%s, %s]" % (h, y))
+                    m.addConstrs(
+                        (gp.quicksum(flow[h, j, k] for j, k in pair.select(j, '*')) -
+                        gp.quicksum(flow[h, i, j] for i, j in pair.select('*', j)) == demandz[a]
+                        for h in commodity for j in commingnode ), "node[%s, %s]"% (a, y))
                 else:
                     print("test 3")
-                    m.addConstr(
-                        gp.quicksum(flow[h, y, k] for y, k in pair.select(y, '*')) -
-                        gp.quicksum(flow[h, x, y] for x, y in pair.select('*', y)), '=', 0, name= "node[%s, %s]" % (h, y))
-
+                    m.addConstrs(
+                        (gp.quicksum(flow[h, j, k] for j, k in pair.select(j, '*')) -
+                         gp.quicksum(flow[h, i, j] for i, j in pair.select('*', j)) == 0
+                        for h in commodity for j in commingnode), "node[%s, %s]" % (a, y))
 
     # Compute optimal solutions
     m.optimize()
@@ -315,15 +307,15 @@ while True:
 a = 1
 while True:
     try:
-        for it in commo:
-           ori = Commodities.cell_value(a, 1)
-           dest = Commodities.cell_value(a, 2)
-           #demands =Commodities.cell_value(a,3)
-           #dem.append(demands)
-           demands[it,ori,dest]=Commodities.cell_value(a,3)
-           print("Demands:", demands[it,ori,dest])
-           #print("Demands:", dem)
-           a = a+1
+        #for it in commo:
+           #ori = Commodities.cell_value(a, 1)
+           #dest = Commodities.cell_value(a, 2)
+        demands =Commodities.cell_value(a,3)
+        dem.append(demands)
+           #demands[it]=Commodities.cell_value(a,3)
+           #print("Demands:", demands[it])
+        print("Demands:", dem)
+        a = a+1
     except IndexError:
         break
 
@@ -338,8 +330,9 @@ print('destination',destination)
 
 print("leaving", leavingnode)
 print('coming', comingnode)
+print("demands", dem)
 
-max_flow(commo,leavingnode,comingnode, origin,destination, price, demands)
+max_flow(commo,leavingnode,comingnode, origin,destination, price, dem)
 #read_file = pd.read_csv(loc3)
 #fp.save_book_as(file_name=loc1,
                #dest_file_name=loc2)

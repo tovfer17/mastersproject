@@ -1,8 +1,6 @@
 import gurobipy as gp
 from openpyxl import load_workbook
 
-
-
 # Objects
 class Arc:
     def __init__(self, origin, destination, cost, capacity):
@@ -29,6 +27,9 @@ class Node:
 
     def addOutLinks(self, Node):
         self.OutLinks.append(Node)
+
+
+
 
 if __name__ == '__main__':
 # Input excel files with arcs data(sheet 1) and commodities data (sheet2)
