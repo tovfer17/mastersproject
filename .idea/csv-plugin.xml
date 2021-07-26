@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/gurobihelp">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/venv/example #8/main2.py">
           <value>
             <Attribute>
@@ -18,6 +25,13 @@
           </value>
         </entry>
         <entry key="/venv/example #8/newcode.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/venv/example #8/see.py">
           <value>
             <Attribute>
               <option name="separator" value="," />

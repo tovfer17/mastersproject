@@ -206,4 +206,6 @@ for h in commodity:
                         (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
                          gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == 0
                         ), "Continuity(%s)" % (commodity[a]))
-                print("done")
+                print("don"e")
+
+###############################

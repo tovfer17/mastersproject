@@ -182,43 +182,45 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
 
     # Create variables
     # flow = m.addVars(test,di, obj=cost, name="flow")
-    flow = m.addVars(commodity, pair, obj=cost,vtype = "C", name="flow")
+    flow = m.addVars(commodity, pair, obj=cost, name="flow")
     #m.setObjective(flow.prod(cost), gp.MINIMIZE)
 
     m.update()
 
     # Arc-capacity constraints
     for x, y in pair:
-        m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x, y], "cap[%s, %s]" % (x, y))
+        m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x,y], "cap[%s, %s]" % (x,y))
 
         # Flow-conservation constraints
     for a in range(len(commodity)):
-            print("a", commodity[a])
-            for y in range(len(leavingnode)):
-                print("d", demandz[a])
-                print ("originnn", origin[a])
-                print ("destination", destination[a])
-                if leavingnode[y] == origin[a]:
+        print("commodity", commodity[a])
+        for y in  range(len(listactualnodes)):
+            print("demand", demandz[a])
+            print ("originnn", origin[a])
+            print ("destination", destination[a])
+            #for p in leavingnode:
+            print("y",leavingnode[y])
+            if listactualnodes[y] == origin[a]:
                     print("test 1")
-                    m.addConstrs(
-                        (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
-                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == demandz[a]
-                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
+                    m.addConstr(
+                         gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
+                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)), '=', demandz[a],
+                         name= "Continuity(%s,%s)" % (commodity[a], listactualnodes[y]))
 
 
-                elif leavingnode[y] == destination[a]:
+            elif listactualnodes[y] == destination[a]:
                     print("test 2")
-                    m.addConstrs(
-                        (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
-                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == -(demandz[a])
-                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
-                else:
+                    m.addConstr(
+                        gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
+                        gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)), '=', -(demandz[a])
+                         , name= "Continuity(%s,%s)" % (commodity[a], listactualnodes[y]))
+            else:
                     print("test 3")
-                    m.addConstrs(
-                        (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
-                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == 0
-                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
-                print("done")
+                    m.addConstr(
+                        gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
+                        gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)), '=', 0
+                         , name= "Continuity(%s,%s)" % (commodity[a], listactualnodes[y]))
+            print("done")
     # Compute optimal solutions
     m.update()
     m.write("whynot.lp")

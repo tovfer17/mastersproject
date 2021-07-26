@@ -1,13 +1,13 @@
 
-spython:S3776v"TRefactor this function to reduce its Cognitive Complexity from 18 to the 15 allowed.(§òü¸8ÆÕÒ¤‰/
 =python:S125T"Remove this commented out code.(²é¥“8ÆÕÒ¤‰/
-Cpython:S125ğ"Remove this commented out code.(¾‹ì™øÿÿÿÿ8ÆÕÒ¤‰/
-lpython:S1192"HDefine a constant instead of duplicating this literal "Vertex " 3 times.(‘îÍûÿÿÿÿ8ÆÕÒ¤‰/
-mpython:S1192~"IDefine a constant instead of duplicating this literal 'New York' 4 times.(óµ…úÿÿÿÿ8ÆÕÒ¤‰/
-Lpython:S1481‘",Remove the unused local variable "thresdem".(Ğ…¦á8ÆÕÒ¤‰/
-Dpython:S1481""%Remove the unused local variable "i".(ıìÑ¤8ÆÕÒ¤‰/
-npython:S1192›"IDefine a constant instead of duplicating this literal "New York" 4 times.(†øùÿÿÿÿ8ÆÕÒ¤‰/
 Bpython:S125D"Remove this commented out code.(ÇÆéùÿÿÿÿ8ÆÕÒ¤‰/
+npython:S1192›"IDefine a constant instead of duplicating this literal "New York" 4 times.(†øùÿÿÿÿ8ÆÕÒ¤‰/
+Lpython:S1481‘",Remove the unused local variable "thresdem".(Ğ…¦á8ÆÕÒ¤‰/
+lpython:S1192"HDefine a constant instead of duplicating this literal "Vertex " 3 times.(‘îÍûÿÿÿÿ8ÆÕÒ¤‰/
+Cpython:S125ğ"Remove this commented out code.(¾‹ì™øÿÿÿÿ8ÆÕÒ¤‰/
 €python:S117´"\Rename this local variable "listkeyPair" to match the regular expression ^[_a-z][a-z0-9_]*$.(£‘äíÿÿÿÿÿ8ÆÕÒ¤‰/
-Cpython:S125Ö"Remove this commented out code.(¢İúİıÿÿÿÿ8ÆÕÒ¤‰/
 |python:S117»"]Rename this local variable "listvalueCap" to match the regular expression ^[_a-z][a-z0-9_]*$.(Ù±ëŒ8ÆÕÒ¤‰/
+spython:S3776v"TRefactor this function to reduce its Cognitive Complexity from 18 to the 15 allowed.(§òü¸8ÆÕÒ¤‰/
+Dpython:S1481""%Remove the unused local variable "i".(ıìÑ¤8ÆÕÒ¤‰/
+Cpython:S125Ö"Remove this commented out code.(¢İúİıÿÿÿÿ8ÆÕÒ¤‰/
+mpython:S1192~"IDefine a constant instead of duplicating this literal 'New York' 4 times.(óµ…úÿÿÿÿ8ÆÕÒ¤‰/

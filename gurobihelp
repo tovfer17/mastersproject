@@ -194,30 +194,30 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
         # Flow-conservation constraints
     for a in range(len(commodity)):
             print("a", commodity[a])
-            for y in range(len(leavingnode)):
+            for y in listactualnodes:
                 print("d", demandz[a])
                 print ("originnn", origin[a])
                 print ("destination", destination[a])
-                if leavingnode[y] == origin[a]:
+                if y == origin[a]:
                     print("test 1")
                     m.addConstrs(
                         (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
                          gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == demandz[a]
-                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
+                         for y in listactualnodes), "Continuity(%s)" % (commodity[a]))
 
 
-                elif leavingnode[y] == destination[a]:
+                elif y == destination[a]:
                     print("test 2")
                     m.addConstrs(
                         (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
                          gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == -(demandz[a])
-                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
+                         for y in listactualnodes), "Continuity(%s)" % (commodity[a]))
                 else:
                     print("test 3")
                     m.addConstrs(
                         (gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
                          gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)) == 0
-                         for y in leavingnode), "Continuity(%s)" % (commodity[a]))
+                         for y in listactualnodes), "Continuity(%s)" % (commodity[a]))
                 print("done")
     # Compute optimal solutions
     m.update()
