@@ -226,20 +226,22 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
     m.optimize()
     print (m.display())
 
-    print("if model fesible it will print a 2 .", m.status)
-
-    # Print solution
-
-    # print solution: optimal value and optimal point
-    print('Obj: %g' % m.objVal)
-     #print(f"optimal value = {model.objVal:.2f}")
-    for var in m.getVars():
-       #print('%s %g' % (v.varName, v.x))
-       if var.X > 0:
-           var_names.append(str(var.varName))
-           var_values.append(var.X)
 
 
+    status = m.status
+    if status != gp.GRB.Status.OPTIMAL:
+        if status == gp.GRB.Status.UNBOUNDED:
+            print("The model cannot be solved because it is unbounded")
+        elif status == gp.GRB.Status.INFEASIBLE:
+            print('The model is infeasible; compute IIS')
+            m.computeIIS()
+            print('\n The following constraints cannot be satisfied:')
+            for c in m.getConstrs():
+                if c.IISConstrs():
+                    print('%s' % c.constrName)
+        elif status != gp.GRB.Status.INF_OR_UNBD:
+            print('Optimization was stopped with status %d' % status)
+    exit(0)
 
 
 #################Driver#########################

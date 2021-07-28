@@ -203,22 +203,22 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
             if listactualnodes[y] == origin[a]:
                     print("test 1")
                     m.addConstr(
-                         gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
-                         gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)), '=', demandz[a],
+                         gp.quicksum(flow[commodity[a], listactualnodes[y], k] for listactualnodes[y], k in pair.select(listactualnodes[y], '*')) -
+                         gp.quicksum(flow[commodity[a], i, listactualnodes[y]] for i, listactualnodes[y] in pair.select('*', listactualnodes[y])), '=', demandz[a],
                          name= "Continuity(%s,%s)" % (commodity[a], listactualnodes[y]))
 
 
             elif listactualnodes[y] == destination[a]:
                     print("test 2")
                     m.addConstr(
-                        gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
-                        gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)), '=', -(demandz[a])
+                        gp.quicksum(flow[commodity[a], listactualnodes[y], k] for listactualnodes[y], k in pair.select(listactualnodes[y], '*')) -
+                        gp.quicksum(flow[commodity[a], i, listactualnodes[y]] for i, listactualnodes[y] in pair.select('*', listactualnodes[y])), '=', -(demandz[a])
                          , name= "Continuity(%s,%s)" % (commodity[a], listactualnodes[y]))
             else:
                     print("test 3")
                     m.addConstr(
-                        gp.quicksum(flow[commodity[a], y, k] for y, k in pair.select(y, '*')) -
-                        gp.quicksum(flow[commodity[a], i, y] for i, y in pair.select('*', y)), '=', 0
+                        gp.quicksum(flow[commodity[a], listactualnodes[y], k] for listactualnodes[y], k in pair.select(listactualnodes[y], '*')) -
+                        gp.quicksum(flow[commodity[a], i, listactualnodes[y]] for i, listactualnodes[y] in pair.select('*', listactualnodes[y])), '=', 0
                          , name= "Continuity(%s,%s)" % (commodity[a], listactualnodes[y]))
             print("done")
     # Compute optimal solutions
