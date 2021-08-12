@@ -2,6 +2,7 @@
 import networkx as netx  # nice (di-)graph Python package
 import matplotlib.pyplot as plt
 import gurobipy as gp
+from gurobipy import GRB
 import xlrd
 import csv
 import pandas as pd
@@ -265,7 +266,14 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz,
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         wr.writerows(zip(var_names, var_values))"""
 
-
+# Print solution
+    if m.status == GRB.OPTIMAL:
+        solution = m.getAttr('x', flow)
+    for h in commodity:
+        print('\nOptimal flows for %s:' % h)
+        for i, j in pair:
+            if solution[h, i, j] > 0:
+                print('%s -> %s: %g' % (i, j, solution[h, i, j]))
 
 #################Driver#########################
 #adding the vertex sheet with all the nodes
