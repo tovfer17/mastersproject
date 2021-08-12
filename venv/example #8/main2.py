@@ -32,6 +32,7 @@ commo=[]
 origin=[]
 destination=[]
 dem=[]
+price=[]
 
 
 #loc1 = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
@@ -130,7 +131,7 @@ def draw_graph():
 
 ################ multicommodity######################
 
-def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz):
+def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz,maxcapacity):
     global graph
     global vertices_no
     global vertices
@@ -151,9 +152,9 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
                 listvalueCap.append((graph[i][j]))
     print("This prints out the capacity of the node pair: ", listvalueCap)
 
-    pair,capacity = gp.multidict(dict(zip(listkeyPair, listvalueCap)))
+    pair,far = gp.multidict(dict(zip(listkeyPair, listvalueCap)))
     print("The dictionary after the merge of the pairs of nodes with the capacities:")
-    print (capacity)
+    print (far)
 
 
     listnodes=[]
@@ -182,14 +183,32 @@ def max_flow(commodity,leavingnode,commingnode, origin,destination,cost,demandz)
 
     # Create variables
     # flow = m.addVars(test,di, obj=cost, name="flow")
-    flow = m.addVars(commodity, pair, obj=cost, name="flow")
+    #flow = m.addVars(commodity, pair, obj=cost, name="flow")
+    flow = {}
+
+    for p in range(len(leavingnode)):
+        print("this is costm", cost[p])
+        for k in range(len(commodity)):
+            print("commodity", commodity[k])
+            flow[commodity[k], leavingnode[p], commingnode[p]] = m.addVar(obj=cost[p], vtype="C",
+                                                                name="flow(%s, %s, %s)" % (commodity[k], leavingnode[p], commingnode[p]))
+
+
+
+    #flow = m.addVars(commodity, pair, obj=cost, name="flow")
     #m.setObjective(flow.prod(cost), gp.MINIMIZE)
 
     m.update()
-
+    cap ={}
     # Arc-capacity constraints
-    for x, y in pair:
-        m.addConstr(sum(flow[h, x, y] for h in commodity) <= capacity[x,y], "cap[%s, %s]" % (x,y))
+    #for x, y in pair:
+    #for f in range(len(listactualnodes)):
+    for f in range(len(leavingnode)):
+            cap[leavingnode[f],commingnode[f]]= m.addConstr(gp.quicksum(flow[commodity[k], leavingnode[f], commingnode[f]]
+                                                                for k in range(len(commodity))),
+                                                        '<=', maxcapacity[f], name="cap[%s]" % (f))
+
+        #m.addConstr(sum(flow[h, x, y] for h in commodity) <= maxcapacity[x,y], "cap[%s, %s]" % (x,y))
 
         # Flow-conservation constraints
     for a in range(len(commodity)):
@@ -299,14 +318,12 @@ while True:
 z = 1
 while True:
     try:
-      for d in commo:
-        for leave  in leavingnode:
-           c = Arcs.cell_value(z, 1)
-           price[d,leave,c]=Arcs.cell_value(z,2)
-           print("cost:", price[d,leave,c])
-           z = z+1
+        c = Arcs.cell_value(z, 2)
+        price.append(c)
+        z= z+1
     except IndexError:
         break
+
 
 a = 1
 while True:
@@ -335,8 +352,10 @@ print('destination',destination)
 print("leaving", leavingnode)
 print('coming', comingnode)
 print("demands", dem)
+print("cost",price)
+print("capacity",maxcapacity)
 
-max_flow(commo,leavingnode,comingnode, origin,destination, price, dem)
+max_flow(commo,leavingnode,comingnode, origin,destination, price, dem,maxcapacity)
 #read_file = pd.read_csv(loc3)
 #fp.save_book_as(file_name=loc1,
                #dest_file_name=loc2)

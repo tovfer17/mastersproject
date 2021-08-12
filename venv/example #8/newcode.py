@@ -83,7 +83,7 @@ if __name__ == '__main__':
      # capacity
     Capacity = {}
     for m in range(len(Arcs)):
-                Capacity[Arcs[m].From, Arcs[m].To] = model.addConstr(gp.quicksum(x[k.Arcs[m].From.Arcs[m].To]
+                Capacity[Arcs[m].From, Arcs[m].To] = model.addConstr(gp.quicksum(x[k,Arcs[m].From, Arcs[m].To]
                                                                              for k in range(len(Commodities))),
                                                                     '<=', Arcs[m].Capac, name = 'Capacity(%d)' % (m))
     # conservation constraint
