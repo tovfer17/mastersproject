@@ -35,13 +35,14 @@ destination=[]
 dem=[]
 price=[]
 
-
 #loc1 = (r"C:\Users\rithi\pyprojnew\networkflow.xls")
 #loc1=("/Users/fer/PycharmProjects/project/networkflow2d.xls")
 loc2= ("/Users/fer/PycharmProjects/project/networkflow2d.xlsx")
-loc3= ('/Users/fer/PycharmProjects/project/export.csv')
+loc3= ('/Users/fer/PycharmProjects/project/exportmain2.csv')
 
 loc1 = ("/Users/fer/PycharmProjects/project/Input_lecct copy.xls")
+loc4 = ("/Users/fer/PycharmProjects/project/Input_lecct copy.xlsx")
+
 
 wb = xlrd.open_workbook(loc1)
 Vertex=wb.sheet_by_index(0)
@@ -364,14 +365,14 @@ print("cost",price)
 print("capacity",maxcapacity)
 
 max_flow(commo,leavingnode,comingnode, origin,destination, price, dem,maxcapacity)
-#read_file = pd.read_csv(loc3)
-#fp.save_book_as(file_name=loc1,
-               #dest_file_name=loc2)
+read_file = pd.read_csv(loc3)
+fp.save_book_as(file_name=loc1,
+               dest_file_name=loc4)
 
-#book = load_workbook(loc2)
-#writer = pandas.ExcelWriter(loc2, engine='openpyxl')
-#writer.book = book
+book = load_workbook(loc4)
+writer = pandas.ExcelWriter(loc4, engine='openpyxl')
+writer.book = book
 
-#writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-#read_file.to_excel(writer, "Max Z", header= False,startrow=1)
-#writer.save()
+writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+read_file.to_excel(writer, "Max Z", header= False,startrow=1)
+writer.save()
